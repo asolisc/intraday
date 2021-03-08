@@ -10,8 +10,9 @@ date: "`r Sys.Date()`"
 output: 
   distill::distill_article:
     toc: true
-    toc_depth: 2
-    css: "resources/theme.css"
+    toc_float: true
+    code_folding: true
+    theme: "resources/theme.css"
 editor_options: 
   chunk_output_type: console
 ---
@@ -25,34 +26,33 @@ knitr::opts_chunk$set(
   echo = FALSE
 )
 
-# --- Data Wrangling ---
-library(tidyverse)
-library(janitor)
-library(arrow)
-library(lubridate)
-library(hms)
+
+# --- Load libraries ---
+library(tidyverse)   # core-data-science
+library(janitor)     # quick data cleansing
+library(arrow)       # for columnar super-fast manipulation
+library(lubridate)   # working with dates
+library(hms)         # working with times
+library(here)        # path management
 # library(readxl)
+
 
 # --- Modeling Time Series ---
 # library(timetk)
 # library(anomalize) # for outlier detection
 
 
-# --- Paths Management ---
-library(here)
-
-
 # --- Source ggplot2 themes ---
-source(here("resources", "ggplot2_themes.R"))
+source(here("resources/ggplot2_themes.R"))
 ```
 
-# 1. Introduction & Importing Data
+## 1. Introduction & Importing Data
 
 We'll work with intraday data for the *S&P/BMV IPC Equity Index*. The data consists of `n = 2,133,890` observations and `k = 23` variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.
 
 ```{r, echo = T}
 # Read the parquet file that contains raw data
-IPC <- vroom(file = here("data-raw/raw-ipc_intraday.csv"), delim = ",")
+IPC <- read_parquet(file = here("data-raw/raw_MEXICO_IPC.parquet"))
 ```
 
 First thing we do is take a look at the columns and data types that we have:
@@ -60,6 +60,8 @@ First thing we do is take a look at the columns and data types that we have:
 ```{r}
 IPC %>% glimpse()
 ```
+
+So we have `boolean`, `character`, `numeric` and `time` types of columns. We also note that the names are not very friendly to work with. We fix that by creating a name vector (`column_names`) and setting it to our `IPC` data.
 
 ```{r}
 # Create vector with new column names
@@ -73,5 +75,38 @@ column_names <- c("ticker","raw_date","raw_time","type",
 
 # Rename the columns
 IPC <- IPC %>% set_names(column_names)
+```
+
+### Missing values
+
+We can count how many `NA`s are present in our data. We do this per column:
+
+```{r}
+map_df(IPC, ~sum(is.na(.))) %>% glimpse()
+```
+
+We see that there are 10 columns (variables) that have all values as `NA`. We assign these variables to the `columns_to_remove` object and remove them from the data. Those columns are:
+
+```{r}
+# Get which columns have all values as NAs.
+columns_to_remove <- map_df(IPC, ~ sum(is.na(.))) %>%
+  pivot_longer(cols = everything(), 
+               names_to = "variable", 
+               values_to = "no_missing") %>% 
+  filter(no_missing > 0) %>%
+  pull(variable)
+
+# Print the selected columns.
+columns_to_remove
+```
+
+We name the *clean* dataset as `IPC_ip` (*IPC intraday prices*).
+
+```{r}
+# Get a new dataset without the selected columns
+IPC_ip <- IPC %>% select(-all_of(columns_to_remove))
+
+# Remove the older df
+rm(IPC)
 ```
 
