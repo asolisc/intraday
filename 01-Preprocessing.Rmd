@@ -1,0 +1,77 @@
+---
+title: "Realized Higher Moment Measures"
+description: |
+  Part 1: Exploratory Data Analysis & Data Preprocessing
+author:
+  - name: Alexis Solis Cancino
+    url: alexis.solisc@gmail.com
+    affiliation: ITAM
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    css: "resources/theme.css"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+# --- set chunk options ---
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE
+)
+
+# --- Data Wrangling ---
+library(tidyverse)
+library(janitor)
+library(arrow)
+library(lubridate)
+library(hms)
+# library(readxl)
+
+# --- Modeling Time Series ---
+# library(timetk)
+# library(anomalize) # for outlier detection
+
+
+# --- Paths Management ---
+library(here)
+
+
+# --- Source ggplot2 themes ---
+source(here("resources", "ggplot2_themes.R"))
+```
+
+# 1. Introduction & Importing Data
+
+We'll work with intraday data for the *S&P/BMV IPC Equity Index*. The data consists of `n = 2,133,890` observations and `k = 23` variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.
+
+```{r, echo = T}
+# Read the parquet file that contains raw data
+IPC <- vroom(file = here("data-raw/raw-ipc_intraday.csv"), delim = ",")
+```
+
+First thing we do is take a look at the columns and data types that we have:
+
+```{r}
+IPC %>% glimpse()
+```
+
+```{r}
+# Create vector with new column names
+column_names <- c("ticker","raw_date","raw_time","type",
+                  "open","high","low","last","volume",
+                  "average_price","vwap","no_trades",
+                  "correction_qualifiers","open_bid",
+                  "high_bid","low_bid","close_bid",
+                  "no_bids","open_ask","high_ask","low_ask",
+                  "close_ask","no_ask")
+
+# Rename the columns
+IPC <- IPC %>% set_names(column_names)
+```
+
