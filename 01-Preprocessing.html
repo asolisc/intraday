@@ -91,8 +91,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2021-03-07" />
-  <meta property="article:created" itemprop="dateCreated" content="2021-03-07" />
+  <meta property="article:published" itemprop="datePublished" content="2021-05-02" />
+  <meta property="article:created" itemprop="dateCreated" content="2021-05-02" />
   <meta name="article:author" content="Alexis Solis Cancino" />
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
@@ -110,7 +110,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-03-07"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-02"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1716,7 +1716,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Realized Higher Moment Measures","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-03-07T00:00:00.000-06:00","citationText":"Cancino, 2021"}
+{"title":"Realized Higher Moment Measures","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-02T00:00:00.000-05:00","citationText":"Cancino, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1735,7 +1735,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="d-byline">
   Alexis Solis Cancino <a href="mailto:alexis.solisc@gmail.com" class="email">alexis.solisc@gmail.com</a> (ITAM)
   
-<br />2021-03-07
+<br />2021-05-02
 </div>
 
 <div class="d-article">
@@ -1752,6 +1752,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <h2 id="introduction-importing-data">1. Introduction &amp; Importing Data</h2>
 <p>We’ll work with intraday data for the <em>S&amp;P/BMV IPC Equity Index</em>. The data consists of <code>n = 2,133,890</code> observations and <code>k = 23</code> variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.</p>
+<p>The first step is, of course, importing the data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -1759,7 +1760,7 @@ Show code
 </summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Read the parquet file that contains raw data</span>
-<span class="va">IPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://arrow.apache.org/docs/r//reference/read_parquet.html">read_parquet</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">&quot;data-raw/raw_MEXICO_IPC.parquet&quot;</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://arrow.apache.org/docs/r//reference/read_parquet.html">read_parquet</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">&quot;data-raw/raw_MEXICO_IPC.parquet&quot;</span><span class="op">)</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
@@ -1771,37 +1772,37 @@ Show code
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="va">IPC</span> <span class="op">%&gt;%</span> <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
 <pre><code>Rows: 2,133,890
 Columns: 23
-$ `#RIC`                  &lt;chr&gt; &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;...
-$ `Date[L]`               &lt;dbl&gt; 19960102, 19960102, 19960102, 199...
-$ `Time[L]`               &lt;time&gt; 08:36:00, 08:38:00, 08:39:00, 08...
-$ Type                    &lt;chr&gt; &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;,...
-$ Open                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.4...
-$ High                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.4...
-$ Low                     &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.4...
-$ Last                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.4...
-$ Volume                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
-$ `Ave. Price`            &lt;dbl&gt; 2777.470, 2777.470, 2777.470, 277...
-$ VWAP                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `No. Trades`            &lt;dbl&gt; 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, ...
-$ `Correction Qualifiers` &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `Open Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `High Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `Low Bid`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `Close Bid`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `No. Bids`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
-$ `Open Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `High Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `Low Ask`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `Close Ask`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, N...
-$ `No. Asks`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...</code></pre>
+$ `#RIC`                  [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MX~
+$ `Date[L]`               [3m[38;5;246m&lt;dbl&gt;[39m[23m 19960102, 19960102, 19960102, 199601~
+$ `Time[L]`               [3m[38;5;246m&lt;time&gt;[39m[23m 08:36:00, 08:38:00, 08:39:00, 08:40~
+$ Type                    [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;, &quot;I~
+$ Open                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ High                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Low                     [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Last                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Volume                  [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Ave. Price`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.470, 2777.470, 2777.470, 2777.4~
+$ VWAP                    [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Trades`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ~
+$ `Correction Qualifiers` [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Open Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Bid`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Bid`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Bids`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Open Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Ask`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Ask`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Asks`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~</code></pre>
 </div>
-<p>So we have <code>boolean</code>, <code>character</code>, <code>numeric</code> and <code>time</code> types of columns. We also note that the names are not very friendly to work with. We fix that by creating a name vector (<code>column_names</code>) and setting it to our <code>IPC</code> data.</p>
+<p>So we have <code>boolean</code>, <code>character</code>, <code>numeric</code> and <code>time</code> types of columns. We also note that the names are not very friendly to work with. We fix that by creating a <em>string</em> vector and using that to replace the names in our data. The new names are:</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -1818,50 +1819,65 @@ Show code
                   <span class="st">&quot;close_ask&quot;</span>,<span class="st">&quot;no_ask&quot;</span><span class="op">)</span>
 
 <span class="co"># Rename the columns</span>
-<span class="va">IPC</span> <span class="op">&lt;-</span> <span class="va">IPC</span> <span class="op">%&gt;%</span> <span class="fu">set_names</span><span class="op">(</span><span class="va">column_names</span><span class="op">)</span>
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> <span class="fu">set_names</span><span class="op">(</span><span class="va">column_names</span><span class="op">)</span>
+
+<span class="co"># Print names</span>
+<span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
+<pre><code> [1] &quot;ticker&quot;                &quot;raw_date&quot;             
+ [3] &quot;raw_time&quot;              &quot;type&quot;                 
+ [5] &quot;open&quot;                  &quot;high&quot;                 
+ [7] &quot;low&quot;                   &quot;last&quot;                 
+ [9] &quot;volume&quot;                &quot;average_price&quot;        
+[11] &quot;vwap&quot;                  &quot;no_trades&quot;            
+[13] &quot;correction_qualifiers&quot; &quot;open_bid&quot;             
+[15] &quot;high_bid&quot;              &quot;low_bid&quot;              
+[17] &quot;close_bid&quot;             &quot;no_bids&quot;              
+[19] &quot;open_ask&quot;              &quot;high_ask&quot;             
+[21] &quot;low_ask&quot;               &quot;close_ask&quot;            
+[23] &quot;no_ask&quot;               </code></pre>
 </div>
 <h3 id="missing-values">Missing values</h3>
-<p>We can count how many <code>NA</code>s are present in our data. We do this per column:</p>
+<p>There seem to be many missing values in the data, so let’s count them! We do this per column:</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu">map_df</span><span class="op">(</span><span class="va">IPC</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="fu">map_df</span><span class="op">(</span><span class="va">ipc_intraday</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
 <pre><code>Rows: 1
 Columns: 23
-$ ticker                &lt;int&gt; 0
-$ raw_date              &lt;int&gt; 0
-$ raw_time              &lt;int&gt; 0
-$ type                  &lt;int&gt; 0
-$ open                  &lt;int&gt; 0
-$ high                  &lt;int&gt; 0
-$ low                   &lt;int&gt; 0
-$ last                  &lt;int&gt; 0
-$ volume                &lt;int&gt; 0
-$ average_price         &lt;int&gt; 0
-$ vwap                  &lt;int&gt; 2133890
-$ no_trades             &lt;int&gt; 0
-$ correction_qualifiers &lt;int&gt; 2133890
-$ open_bid              &lt;int&gt; 2133890
-$ high_bid              &lt;int&gt; 2133890
-$ low_bid               &lt;int&gt; 2133890
-$ close_bid             &lt;int&gt; 2133890
-$ no_bids               &lt;int&gt; 0
-$ open_ask              &lt;int&gt; 2133890
-$ high_ask              &lt;int&gt; 2133890
-$ low_ask               &lt;int&gt; 2133890
-$ close_ask             &lt;int&gt; 2133890
-$ no_ask                &lt;int&gt; 0</code></pre>
+$ ticker                [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ raw_date              [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ raw_time              [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ type                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ open                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ high                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ low                   [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ last                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ volume                [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ average_price         [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ vwap                  [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ no_trades             [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ correction_qualifiers [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ open_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ high_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ low_bid               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ close_bid             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ no_bids               [3m[38;5;246m&lt;int&gt;[39m[23m 0
+$ open_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ high_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ low_ask               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ close_ask             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
+$ no_ask                [3m[38;5;246m&lt;int&gt;[39m[23m 0</code></pre>
 </div>
-<p>We see that there are 10 columns (variables) that have all values as <code>NA</code>. We assign these variables to the <code>columns_to_remove</code> object and remove them from the data. Those columns are:</p>
+<p>We see that there are 10 columns that have all values as <code>NA</code>, therefore we can remove all of these variables. The variables to remove are:</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -1869,7 +1885,7 @@ Show code
 </summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get which columns have all values as NAs.</span>
-<span class="va">columns_to_remove</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">IPC</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">columns_to_remove</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">ipc_intraday</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, 
                names_to <span class="op">=</span> <span class="st">&quot;variable&quot;</span>, 
                values_to <span class="op">=</span> <span class="st">&quot;no_missing&quot;</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -1887,7 +1903,7 @@ Show code
  [7] &quot;open_ask&quot;              &quot;high_ask&quot;             
  [9] &quot;low_ask&quot;               &quot;close_ask&quot;            </code></pre>
 </div>
-<p>We name the <em>clean</em> dataset as <code>IPC_ip</code> (<em>IPC intraday prices</em>).</p>
+<p>Thus, our data is now leaner, and it includes the following variables:</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -1895,15 +1911,19 @@ Show code
 </summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get a new dataset without the selected columns</span>
-<span class="va">IPC_ip</span> <span class="op">&lt;-</span> <span class="va">IPC</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu">all_of</span><span class="op">(</span><span class="va">columns_to_remove</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu">all_of</span><span class="op">(</span><span class="va">columns_to_remove</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># Remove the older df</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span><span class="op">(</span><span class="va">IPC</span><span class="op">)</span>
+<span class="co"># Print names</span>
+<span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
+<pre><code> [1] &quot;ticker&quot;        &quot;raw_date&quot;      &quot;raw_time&quot;      &quot;type&quot;         
+ [5] &quot;open&quot;          &quot;high&quot;          &quot;low&quot;           &quot;last&quot;         
+ [9] &quot;volume&quot;        &quot;average_price&quot; &quot;no_trades&quot;     &quot;no_bids&quot;      
+[13] &quot;no_ask&quot;       </code></pre>
 </div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
