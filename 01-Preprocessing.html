@@ -1752,6 +1752,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#exploring-the-time-window-for-prices">2.1 Exploring the time window for prices</a>
 <ul>
 <li><a href="#time-series-index">Time Series Index</a></li>
+<li><a href="#adjustments-to-the-time-series-index">Adjustments to the Time Series Index</a></li>
+<li><a href="#joining-the-data">Joining the Data</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -1785,29 +1787,29 @@ Show code
 </details>
 <pre><code>Rows: 2,133,890
 Columns: 23
-$ `#RIC`                  [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MX~
-$ `Date[L]`               [3m[38;5;246m&lt;dbl&gt;[39m[23m 19960102, 19960102, 19960102, 199601~
-$ `Time[L]`               [3m[38;5;246m&lt;time&gt;[39m[23m 08:36:00, 08:38:00, 08:39:00, 08:40~
-$ Type                    [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;, &quot;I~
-$ Open                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ High                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Low                     [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Last                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Volume                  [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
-$ `Ave. Price`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.470, 2777.470, 2777.470, 2777.4~
-$ VWAP                    [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Trades`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ~
-$ `Correction Qualifiers` [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Open Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `High Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Low Bid`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Close Bid`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Bids`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
-$ `Open Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `High Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Low Ask`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Close Ask`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Asks`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~</code></pre>
+$ `#RIC`                  &lt;chr&gt; &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MX~
+$ `Date[L]`               &lt;dbl&gt; 19960102, 19960102, 19960102, 199601~
+$ `Time[L]`               &lt;time&gt; 08:36:00, 08:38:00, 08:39:00, 08:40~
+$ Type                    &lt;chr&gt; &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;, &quot;I~
+$ Open                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ High                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Low                     &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Last                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Volume                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Ave. Price`            &lt;dbl&gt; 2777.470, 2777.470, 2777.470, 2777.4~
+$ VWAP                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Trades`            &lt;dbl&gt; 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ~
+$ `Correction Qualifiers` &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Open Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Bid`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Bid`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Bids`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Open Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Ask`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Ask`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Asks`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~</code></pre>
 </div>
 <p>So we have <code>boolean</code>, <code>character</code>, <code>numeric</code> and <code>time</code> types of columns. We also note that the names are not very friendly to work with. We fix that by creating a <em>string</em> vector and using that to replace the names in our data. The new names are:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1860,29 +1862,29 @@ Show code
 </details>
 <pre><code>Rows: 1
 Columns: 23
-$ ticker                [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ raw_date              [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ raw_time              [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ type                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ open                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ high                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ low                   [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ last                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ volume                [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ average_price         [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ vwap                  [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_trades             [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ correction_qualifiers [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ open_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ high_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ low_bid               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ close_bid             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_bids               [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ open_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ high_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ low_ask               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ close_ask             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_ask                [3m[38;5;246m&lt;int&gt;[39m[23m 0</code></pre>
+$ ticker                &lt;int&gt; 0
+$ raw_date              &lt;int&gt; 0
+$ raw_time              &lt;int&gt; 0
+$ type                  &lt;int&gt; 0
+$ open                  &lt;int&gt; 0
+$ high                  &lt;int&gt; 0
+$ low                   &lt;int&gt; 0
+$ last                  &lt;int&gt; 0
+$ volume                &lt;int&gt; 0
+$ average_price         &lt;int&gt; 0
+$ vwap                  &lt;int&gt; 2133890
+$ no_trades             &lt;int&gt; 0
+$ correction_qualifiers &lt;int&gt; 2133890
+$ open_bid              &lt;int&gt; 2133890
+$ high_bid              &lt;int&gt; 2133890
+$ low_bid               &lt;int&gt; 2133890
+$ close_bid             &lt;int&gt; 2133890
+$ no_bids               &lt;int&gt; 0
+$ open_ask              &lt;int&gt; 2133890
+$ high_ask              &lt;int&gt; 2133890
+$ low_ask               &lt;int&gt; 2133890
+$ close_ask             &lt;int&gt; 2133890
+$ no_ask                &lt;int&gt; 0</code></pre>
 </div>
 <p>We see that there are 10 columns that have all values as <code>NA</code>, therefore we can remove all of these variables. The variables to remove are:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2222,7 +2224,130 @@ Show code
 </div>
 </details>
 </div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h3 id="adjustments-to-the-time-series-index">Adjustments to the Time Series Index</h3>
+<p>Below, we print the first and last 10 values of the <code>ts_index</code> object (the <em>time series index</em>).</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make index by using vectorized function</span>
+<span class="va">ts_index</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>
+  
+  index <span class="op">=</span> <span class="fu">timetk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/timetk/man/tk_make_timeseries.html">tk_make_timeseries</a></span><span class="op">(</span>start_date <span class="op">=</span> <span class="va">first_dttm</span>,
+                                     end_date <span class="op">=</span> <span class="va">last_dttm</span>,
+                                     by <span class="op">=</span> <span class="st">&quot;60 sec&quot;</span><span class="op">)</span>
+<span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Create date and time columns</span>
+  <span class="fu">mutate</span><span class="op">(</span>index_date <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/as_date.html">as_date</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+         
+         index_time <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/hms.html">hms</a></span><span class="op">(</span>seconds <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/second.html">second</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+                          minutes <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/minute.html">minute</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+                          hours <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/hour.html">hour</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>
+                          <span class="op">)</span>
+         <span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Filter for times between 08:30 and 15:00</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">index_time</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">as_hms</a></span><span class="op">(</span><span class="st">&quot;08:30:00&quot;</span><span class="op">)</span>,
+         <span class="va">index_time</span> <span class="op">&lt;=</span> <span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">as_hms</a></span><span class="op">(</span><span class="st">&quot;15:00:00&quot;</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Get rid of absent dates  </span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">index_date</span> <span class="op">%in%</span> <span class="va">ipc_intraday</span><span class="op">$</span><span class="va">tidy_date</span><span class="op">)</span>
+
+<span class="co"># Print first 10 values</span>
+<span class="va">ts_index</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 2,194,683 x 3
+   index               index_date index_time
+   &lt;dttm&gt;              &lt;date&gt;     &lt;time&gt;    
+ 1 1996-01-02 08:30:00 1996-01-02 08:30     
+ 2 1996-01-02 08:31:00 1996-01-02 08:31     
+ 3 1996-01-02 08:32:00 1996-01-02 08:32     
+ 4 1996-01-02 08:33:00 1996-01-02 08:33     
+ 5 1996-01-02 08:34:00 1996-01-02 08:34     
+ 6 1996-01-02 08:35:00 1996-01-02 08:35     
+ 7 1996-01-02 08:36:00 1996-01-02 08:36     
+ 8 1996-01-02 08:37:00 1996-01-02 08:37     
+ 9 1996-01-02 08:38:00 1996-01-02 08:38     
+10 1996-01-02 08:39:00 1996-01-02 08:39     
+# ... with 2,194,673 more rows</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Print last 10 values</span>
+<span class="va">ts_index</span> <span class="op">%&gt;%</span> 
+  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">index</span><span class="op">)</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 2,194,683 x 3
+   index               index_date index_time
+   &lt;dttm&gt;              &lt;date&gt;     &lt;time&gt;    
+ 1 2018-06-05 15:00:00 2018-06-05 15:00     
+ 2 2018-06-05 14:59:00 2018-06-05 14:59     
+ 3 2018-06-05 14:58:00 2018-06-05 14:58     
+ 4 2018-06-05 14:57:00 2018-06-05 14:57     
+ 5 2018-06-05 14:56:00 2018-06-05 14:56     
+ 6 2018-06-05 14:55:00 2018-06-05 14:55     
+ 7 2018-06-05 14:54:00 2018-06-05 14:54     
+ 8 2018-06-05 14:53:00 2018-06-05 14:53     
+ 9 2018-06-05 14:52:00 2018-06-05 14:52     
+10 2018-06-05 14:51:00 2018-06-05 14:51     
+# ... with 2,194,673 more rows</code></pre>
+</div>
+<p>Note that we’ve removed the dates that don’t match those from the original data. This gets rid of weekends, too.</p>
+<h3 id="joining-the-data">Joining the Data</h3>
+<p>We will make some checks further down the line, but for now, the data is ready to be <strong>joined</strong> into a new object, so that we have <strong>no gaps</strong> in between the 1-minute prices.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ts_index</span> <span class="op">%&gt;%</span> 
+  <span class="fu">left_join</span><span class="op">(</span>
+    <span class="va">ipc_intraday</span>,
+    by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">&quot;index&quot;</span> <span class="op">=</span> <span class="st">&quot;tidy_dttm&quot;</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Remove useless columns</span>
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">tidy_date</span>, <span class="va">tidy_time</span><span class="op">)</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Below, we print the first 10 rows of this joined data. It’s evident that many prices have an <code>NA</code> value, because they’re not available. We’ll <em>impute</em> these next.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 2,194,683 x 6
+   index               index_date index_time last_price volume
+   &lt;dttm&gt;              &lt;date&gt;     &lt;time&gt;          &lt;dbl&gt;  &lt;dbl&gt;
+ 1 1996-01-02 08:30:00 1996-01-02 08:30             NA      NA
+ 2 1996-01-02 08:31:00 1996-01-02 08:31             NA      NA
+ 3 1996-01-02 08:32:00 1996-01-02 08:32             NA      NA
+ 4 1996-01-02 08:33:00 1996-01-02 08:33             NA      NA
+ 5 1996-01-02 08:34:00 1996-01-02 08:34             NA      NA
+ 6 1996-01-02 08:35:00 1996-01-02 08:35             NA      NA
+ 7 1996-01-02 08:36:00 1996-01-02 08:36           2777.      0
+ 8 1996-01-02 08:37:00 1996-01-02 08:37             NA      NA
+ 9 1996-01-02 08:38:00 1996-01-02 08:38           2777.      0
+10 1996-01-02 08:39:00 1996-01-02 08:39           2777.      0
+# ... with 2,194,673 more rows, and 1 more variable: no_trades &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

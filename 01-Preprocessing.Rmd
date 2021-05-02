@@ -315,3 +315,63 @@ last_dttm <- right_edge %>%
   paste("15:00:00") %>% 
   as_datetime()
 ```
+
+### Adjustments to the Time Series Index
+
+Below, we print the first and last 10 values of the `ts_index` object (the *time series index*).
+
+```{r}
+# Make index by using vectorized function
+ts_index <- tibble(
+  
+  index = timetk::tk_make_timeseries(start_date = first_dttm,
+                                     end_date = last_dttm,
+                                     by = "60 sec")
+) %>% 
+  
+  # Create date and time columns
+  mutate(index_date = as_date(index),
+         
+         index_time = hms(seconds = second(index),
+                          minutes = minute(index),
+                          hours = hour(index)
+                          )
+         ) %>% 
+  
+  # Filter for times between 08:30 and 15:00
+  filter(index_time >= as_hms("08:30:00"),
+         index_time <= as_hms("15:00:00")) %>% 
+  
+  # Get rid of absent dates  
+  filter(index_date %in% ipc_intraday$tidy_date)
+
+# Print first 10 values
+ts_index
+
+# Print last 10 values
+ts_index %>% 
+  arrange(desc(index))
+```
+
+Note that we've removed the dates that don't match those from the original data. This gets rid of weekends, too.
+
+### Joining the Data
+
+We will make some checks further down the line, but for now, the data is ready to be **joined** into a new object, so that we have **no gaps** in between the 1-minute prices.
+
+```{r}
+ipc_intraday <- ts_index %>% 
+  left_join(
+    ipc_intraday,
+    by = c("index" = "tidy_dttm")) %>% 
+  
+  # Remove useless columns
+  select(-c(tidy_date, tidy_time))
+```
+
+Below, we print the first 10 rows of this joined data. It's evident that many prices have an `NA` value, because they're not available. We'll *impute* these next.
+
+```{r}
+ipc_intraday
+```
+
