@@ -114,3 +114,37 @@ ipc_intraday <- ipc_intraday %>% select(-all_of(columns_to_remove))
 ipc_intraday %>% names()
 ```
 
+# 2. Feature Engineering & Data Wrangling
+
+We then carry on with the analysis by creating some new variables (a.k.a. *Feature Engineering*) and manipulating the data. The first manipulations we do are the following:
+
+1.  First, a `tidy_date` variable is created, where the date is parsed according to the *ISO 8601* standard that states that dates should be expressed in the `YYYY-MM-DD` format. In consequence, the `raw_date` column is dropped and is replaced by the newly created `tidy_date` variable.
+
+2.  The `raw_time` column is replaced for the `tidy_time` variable, which parses the time correctly.
+
+3.  The `no_bids`, `no_ask`, `average_price`, `ticker`, `type`, `open`, `high`, and `low` columns are removed because (we think) they are of no use for the analysis.
+
+4.  We rename the `last` variable as `last_price`.
+
+```{r}
+ipc_intraday <- ipc_intraday %>% 
+  
+  # Create time variables: tidy_date, tidy_time, tidy_dttm
+  mutate(tidy_date = lubridate::ymd(raw_date),
+         tidy_time = hms::as_hms(raw_time)
+         ) %>%
+  
+  # Remove some columns
+  select(-c(raw_date, raw_time, ticker, type, open, high, low, no_bids, no_ask, average_price)) %>% 
+  
+  # Get newly created variable to the beginning of tibble
+  relocate(starts_with("tidy"), .before = 1) %>% 
+  
+  # Rename "last" variable
+  rename(last_price = last)
+
+# Print the new dataset
+ipc_intraday
+
+```
+

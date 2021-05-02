@@ -1747,6 +1747,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li><a href="#missing-values">Missing values</a></li>
 </ul></li>
+<li><a href="#feature-engineering-data-wrangling">2. Feature Engineering &amp; Data Wrangling</a></li>
 </ul>
 </nav>
 </div>
@@ -1923,7 +1924,57 @@ Show code
  [9] &quot;volume&quot;        &quot;average_price&quot; &quot;no_trades&quot;     &quot;no_bids&quot;      
 [13] &quot;no_ask&quot;       </code></pre>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="feature-engineering-data-wrangling">2. Feature Engineering &amp; Data Wrangling</h1>
+<p>We then carry on with the analysis by creating some new variables (a.k.a. <em>Feature Engineering</em>) and manipulating the data. The first manipulations we do are the following:</p>
+<ol type="1">
+<li><p>First, a <code>tidy_date</code> variable is created, where the date is parsed according to the <em>ISO 8601</em> standard that states that dates should be expressed in the <code>YYYY-MM-DD</code> format. In consequence, the <code>raw_date</code> column is dropped and is replaced by the newly created <code>tidy_date</code> variable.</p></li>
+<li><p>The <code>raw_time</code> column is replaced for the <code>tidy_time</code> variable, which parses the time correctly.</p></li>
+<li><p>The <code>no_bids</code>, <code>no_ask</code>, <code>average_price</code>, <code>ticker</code>, <code>type</code>, <code>open</code>, <code>high</code>, and <code>low</code> columns are removed because (we think) they are of no use for the analysis.</p></li>
+<li><p>We rename the <code>last</code> variable as <code>last_price</code>.</p></li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Create time variables: tidy_date, tidy_time, tidy_dttm</span>
+  <span class="fu">mutate</span><span class="op">(</span>tidy_date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="http://lubridate.tidyverse.org/reference/ymd.html">ymd</a></span><span class="op">(</span><span class="va">raw_date</span><span class="op">)</span>,
+         tidy_time <span class="op">=</span> <span class="fu">hms</span><span class="fu">::</span><span class="fu"><a href="https://hms.tidyverse.org/reference/hms.html">as_hms</a></span><span class="op">(</span><span class="va">raw_time</span><span class="op">)</span>
+         <span class="op">)</span> <span class="op">%&gt;%</span>
+  
+  <span class="co"># Remove some columns</span>
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">raw_date</span>, <span class="va">raw_time</span>, <span class="va">ticker</span>, <span class="va">type</span>, <span class="va">open</span>, <span class="va">high</span>, <span class="va">low</span>, <span class="va">no_bids</span>, <span class="va">no_ask</span>, <span class="va">average_price</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Get newly created variable to the beginning of tibble</span>
+  <span class="fu">relocate</span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">&quot;tidy&quot;</span><span class="op">)</span>, .before <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Rename &quot;last&quot; variable</span>
+  <span class="fu">rename</span><span class="op">(</span>last_price <span class="op">=</span> <span class="va">last</span><span class="op">)</span>
+
+<span class="co"># Print the new dataset</span>
+<span class="va">ipc_intraday</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 2,133,890 x 5
+   tidy_date  tidy_time last_price volume no_trades
+   &lt;date&gt;     &lt;time&gt;         &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+ 1 1996-01-02 08:36          2777.      0         1
+ 2 1996-01-02 08:38          2777.      0         2
+ 3 1996-01-02 08:39          2777.      0         3
+ 4 1996-01-02 08:40          2777.      0         3
+ 5 1996-01-02 08:41          2777.      0         3
+ 6 1996-01-02 08:42          2777.      0         3
+ 7 1996-01-02 08:43          2777.      0         3
+ 8 1996-01-02 08:44          2777.      0         3
+ 9 1996-01-02 08:45          2777.      0         3
+10 1996-01-02 08:46          2777.      0         3
+# ... with 2,133,880 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
