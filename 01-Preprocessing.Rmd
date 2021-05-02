@@ -145,6 +145,115 @@ ipc_intraday <- ipc_intraday %>%
 
 # Print the new dataset
 ipc_intraday
-
 ```
 
+
+## 2.1 Exploring the time window for prices
+
+Now, let's explore both the `tidy_date` and `tidy_time` variables. First, it's useful to see how many unique dates (i.e. the number of trading-days) are present in the data.
+
+```{r}
+n_days <- ipc_intraday %>% 
+  distinct(tidy_date) %>% 
+  nrow()
+
+# Print the number of days
+n_days %>% format(big.mark = ",")
+```
+
+So we have `r n_days %>% format(big.mark = ",")` different trading-days.
+
+Now, regarding the `tidy_time` variable, the data shows that we have prices from **05:32 a.m.** all the way through **08:22 p.m.**
+
+```{r}
+earliest_times <- ipc_intraday %>% 
+  select(tidy_time) %>% 
+  unique() %>% 
+  arrange(tidy_time) %>% 
+  head() %>% 
+  pull()
+
+latest_times <- ipc_intraday %>% 
+  select(tidy_time) %>% 
+  unique() %>% 
+  arrange(desc(tidy_time)) %>% 
+  head() %>% 
+  pull()
+
+tibble(
+  earliest = earliest_times,
+  latest = latest_times
+)
+```
+
+We can also visualize how many datapoints we have, per hour.
+
+```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
+ipc_intraday %>% 
+  mutate(tidy_hour = as.factor(hour(tidy_time))) %>% 
+  count(tidy_hour, sort = T, name = "trades_per_hour") %>% 
+  # mutate(tidy_hour = fct_reorder(tidy_hour, .x = trades_per_hour, .desc = T)) %>%
+  ggplot(aes(tidy_hour, trades_per_hour)) +
+  geom_col(aes(fill = between(x = as.numeric(tidy_hour), 
+                              left = 5, 
+                              right = 10)),
+           show.legend = F) +
+  scale_fill_manual(values = amazing_colors[c(2,8)]) +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  labs(
+    title = "No. Prices per Hour in the Sample",
+    x = "Hour",
+    y = NULL
+  )
+```
+
+From the plot above, we see that most of the prices lie between 8:00AM - 3:00PM. It's interesting that the hours `8` and `15` have fewer datapoints. We can further inspect each one to see the hour-minute components of those trades.
+
+```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
+ipc_intraday %>% 
+  mutate(tidy_hour = as.factor(hour(tidy_time)),
+         tidy_minute = minute(tidy_time)) %>%
+  filter(tidy_hour == 8) %>% 
+  count(tidy_minute, sort = T, name = "trades_per_minute") %>% 
+  ggplot(aes(tidy_minute, trades_per_minute)) +
+  geom_col(aes(fill = tidy_minute < 30),
+           show.legend = F) +
+  scale_fill_manual(values = amazing_colors[c(8,2)]) +
+  scale_x_continuous(breaks = seq(0, 60, 5)) +
+  scale_y_continuous(
+    labels = scales::number_format(big.mark = ","),
+    breaks = seq(0, 5000, length.out = 11)
+    ) +
+  labs(
+    title = "Number of Trades per Minute from 8:00AM-8:59AM",
+    x = "Minute",
+    y = NULL
+  )
+```
+
+As expected, the second half-hour is the most active (that is, the period from 8:30AM - 8:59AM).
+
+Now, let's do the same for the `15` hour-mark:
+
+```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
+ipc_intraday %>% 
+  mutate(tidy_hour = as.factor(hour(tidy_time)),
+         tidy_minute = minute(tidy_time)) %>%
+  filter(tidy_hour == 15) %>% 
+  count(tidy_minute, sort = T, name = "trades_per_minute") %>% 
+  ggplot(aes(tidy_minute, trades_per_minute)) +
+  geom_col(aes(fill = trades_per_minute > 2500),
+           show.legend = F) +
+  scale_fill_manual(values = amazing_colors[c(2,8)]) +
+  scale_x_continuous(breaks = seq(0, 60, 5)) +
+  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+    labs(
+    title = "Number of Trades per Minute from 3:00PM-3:59PM",
+    x = "Minute",
+    y = NULL
+  )
+```
+
+Here, the time with most trades is 3:00PM exactly. That's what we need because we'll ignore the rest of the trades. Following *Liu, Patton, Sheppard (2013)*, we'll discard any prices that were quoted outside normal business hours. Hence, we want prices that lie between `08:30` and `15:00`.
+
+To achieve this, we'll introduce the concept of a *time series index*.
