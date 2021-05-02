@@ -254,6 +254,64 @@ ipc_intraday %>%
   )
 ```
 
-Here, the time with most trades is 3:00PM exactly. That's what we need because we'll ignore the rest of the trades. Following *Liu, Patton, Sheppard (2013)*, we'll discard any prices that were quoted outside normal business hours. Hence, we want prices that lie between `08:30` and `15:00`.
+Here, the time with most trades is 3:00PM exactly. Following *Liu, Patton, Sheppard (2013)*, we'll discard any prices that were quoted outside normal business hours. Hence, we want prices that lie between `08:30` and `15:00`.
 
 To achieve this, we'll introduce the concept of a *time series index*.
+
+### Time Series Index
+
+Before we continue, we must create the so called **time series index**. To achieve this, a `dttm` (*datetime*) variable is created, which is the result of combining the `tidy_date` variable and the `tidy_time` variable. This combination gets the name of `tidy_dttm`. In this case, this is the variable by which the time series will be indexed. Below we print a small sample (first 6 rows) of this variable index:
+
+```{r}
+ipc_intraday <- ipc_intraday %>% 
+  
+  # Add time series index: tidy_dttm
+  mutate(tidy_dttm = ymd_hms(str_c(tidy_date, tidy_time))) %>%
+  
+  relocate(tidy_dttm, .before = 1)
+
+ipc_intraday %>% select(tidy_dttm) %>% head()
+```
+
+Next, in order to know the *edges* of the _datetime_ variable, we can get the first and last values in the time series. We name these values `left_edge` (first value) and `right_edge` (last value), respectively.
+
+```{r}
+left_edge <- ipc_intraday %>%
+  
+  # Arrange in descending tidy_dttm order
+  arrange(tidy_dttm) %>% 
+  
+  # Get the vector
+  pull(tidy_dttm) %>% 
+  
+  # Get the first element of the vector
+  first()
+
+right_edge <- ipc_intraday %>% 
+  
+  # Arrange in descending tidy_dttm order
+  arrange(tidy_dttm) %>% 
+  
+  # Get the vector
+  pull(tidy_dttm) %>% 
+  
+  # Get the last element of the vector
+  last()
+
+paste("The first date-time in our data is:", left_edge) 
+paste("The last date-time in our data is:", right_edge) 
+```
+
+These values are incorrect; the first value in our time-series should be `1996-01-02 08:30:00` and the last one should be: `2018-06-05 15:00:00`. The Time Series Index will be defined based on these *correct* values. These will be created as the `first_dttm` and `last_dttm` variables.
+
+```{r}
+first_dttm <- left_edge %>% 
+  as_date() %>% 
+  paste("08:30:00") %>% 
+  as_datetime()
+
+last_dttm <- right_edge %>% 
+  as_date() %>% 
+  paste("15:00:00") %>% 
+  as_datetime()
+```
