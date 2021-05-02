@@ -81,7 +81,7 @@ ipc_intraday <- ipc_intraday %>% set_names(column_names)
 ipc_intraday %>% names()
 ```
 
-### Missing values
+## 1.1 Missing values
 
 There seem to be many missing values in the data, so let's count them! We do this per column:
 
