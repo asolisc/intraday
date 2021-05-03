@@ -87,7 +87,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_meta_tags-->
   <title>Realized Higher Moment Measures of Equity Returns</title>
 
-  <meta property="description" itemprop="description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
+  <meta property="description" itemprop="description" content="Part 1: Data Preprocessing" />
 
 
   <!--  https://schema.org/Article -->
@@ -98,19 +98,19 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
   <meta property="og:title" content="Realized Higher Moment Measures of Equity Returns" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
+  <meta property="og:description" content="Part 1: Data Preprocessing" />
   <meta property="og:locale" content="en_US" />
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary" />
   <meta property="twitter:title" content="Realized Higher Moment Measures of Equity Returns" />
-  <meta property="twitter:description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
+  <meta property="twitter:description" content="Part 1: Data Preprocessing" />
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures of Equity Returns"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-03"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures of Equity Returns"]},{"type":"character","attributes":{},"value":["Part 1: Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-03"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1716,7 +1716,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Realized Higher Moment Measures of Equity Returns","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-03T00:00:00.000-05:00","citationText":"Cancino, 2021"}
+{"title":"Realized Higher Moment Measures of Equity Returns","description":"Part 1: Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-03T00:00:00.000-05:00","citationText":"Cancino, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1729,7 +1729,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <h1>Realized Higher Moment Measures of Equity Returns</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Part 1: Exploratory Data Analysis &amp; Data Preprocessing</p></p>
+<p><p>Part 1: Data Preprocessing</p></p>
 </div>
 
 <div class="d-byline">
@@ -1760,6 +1760,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#computing-intraday-log-returns">2.4 Computing Intraday Log-Returns</a></li>
 <li><a href="#setting-overnight-returns-to-na">2.5 Setting Overnight Returns to NA</a></li>
 <li><a href="#removing-outliers">2.6 Removing Outliers</a></li>
+<li><a href="#final-data">2.7 Final Data</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2796,6 +2797,21 @@ Show code
 </details>
 </div>
 <p>In this case we’ve set the variable <code>threshold</code> to the value <code>.10</code> as having a 10% 1-minute return would be extremely rare (most probably a mistake in the data). Fortunately, in this case, we have no anomalous returns so no log-return data had to be removed.</p>
+<h2 id="final-data">2.7 Final Data</h2>
+<p>After all this preprocessing steps, we are ready to write to data to disk. We will use this preprocessed data when working on Realized Variance Analysis and Volume Analysis.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Write data to parquet</span>
+<span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://arrow.apache.org/docs/r//reference/write_parquet.html">write_parquet</a></span><span class="op">(</span>sink <span class="op">=</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">&quot;data-processed/intraday_ipc.parquet&quot;</span><span class="op">)</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+</div>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

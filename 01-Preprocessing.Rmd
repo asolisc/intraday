@@ -1,7 +1,7 @@
 ---
 title: "Realized Higher Moment Measures of Equity Returns"
 description: |
-  Part 1: Exploratory Data Analysis & Data Preprocessing
+  Part 1: Data Preprocessing
 author:
   - name: Alexis Solis Cancino
     url: alexis.solisc@gmail.com
@@ -642,3 +642,12 @@ ipc_intraday <- ipc_intraday %>%
 
 In this case we've set the variable `threshold` to the value `.10` as having a 10% 1-minute return would be extremely rare (most probably a mistake in the data). Fortunately, in this case, we have no anomalous returns so no log-return data had to be removed.
 
+## 2.7 Final Data
+
+After all this preprocessing steps, we are ready to write to data to disk. We will use this preprocessed data when working on Realized Variance Analysis and Volume Analysis.
+
+```{r}
+# Write data to parquet
+ipc_intraday %>% 
+  write_parquet(sink = here("data-processed/intraday_ipc.parquet"))
+```
