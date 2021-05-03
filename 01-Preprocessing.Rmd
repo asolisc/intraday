@@ -1,5 +1,5 @@
 ---
-title: "Realized Higher Moment Measures"
+title: "Realized Higher Moment Measures of Equity Returns"
 description: |
   Part 1: Exploratory Data Analysis & Data Preprocessing
 author:
@@ -45,7 +45,7 @@ library(timetk)
 source(here("resources/ggplot2_themes.R"))
 ```
 
-## 1. Introduction & Importing Data
+# 1. Introduction & Importing Data
 
 We'll work with intraday data for the *S&P/BMV IPC Equity Index*. The data consists of `n = 2,133,890` observations and `k = 23` variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.
 
@@ -86,7 +86,14 @@ ipc_intraday %>% names()
 There seem to be many missing values in the data, so let's count them! We do this per column:
 
 ```{r}
-map_df(ipc_intraday, ~ sum(is.na(.x))) %>% glimpse()
+map_df(ipc_intraday, ~ sum(is.na(.x))) %>% 
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "missing_count"
+  ) %>% 
+  arrange(-missing_count) %>% 
+  print(n = 23L)
 ```
 
 We see that there are 10 columns that have all values as `NA`, therefore we can remove all of these variables. The variables to remove are:
@@ -374,4 +381,89 @@ Below, we print the first 10 rows of this joined data. It's evident that many pr
 ```{r}
 ipc_intraday
 ```
+
+
+## 2.2 Price Imputation
+
+We can check how many missing prices we have in the data:
+
+```{r}
+ipc_intraday %>% 
+  filter(is.na(last_price)) %>% 
+  count() %>% 
+  pull(n) %>% 
+  format(big.mark = ",")
+```
+
+So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for `volume` and number of trades(`no_trades`). These can be imputed easily: substituting a zero everytime there's no price data (this is a reasonable imputation). First, let's check how many missing values we have per column:
+
+```{r}
+ipc_intraday %>% 
+  map_df(.f = ~ sum(is.na(.))) %>% 
+  pivot_longer(
+    cols = everything(), 
+    names_to = "variable", 
+    values_to = "missing_count"
+    )
+```
+
+We now impute the volume and number of trades and check that indeed there are no missing values:
+
+```{r}
+# Impute volume and no_trades
+ipc_intraday <- ipc_intraday %>% 
+  mutate(
+    volume = if_else(is.na(last_price), 0, volume),
+    no_trades = if_else(is.na(last_price), 0, no_trades)
+  ) 
+
+ipc_intraday %>% 
+  map_df(.f = ~ sum(is.na(.))) %>% 
+  pivot_longer(
+    cols = everything(), 
+    names_to = "variable", 
+    values_to = "missing_count"
+    )
+```
+
+
+Except for the first 6 data points, we will impute the prices by looking at the  last available price. For the first 6 data points, we take a look at the first non-missing price, and use that one as a replacement value.
+
+```{r}
+# Impute first 6 prices
+ipc_intraday$last_price[1:6] <- ipc_intraday$last_price[7]
+
+# Impute the rest of the prices using fill()
+ipc_intraday <- ipc_intraday %>% 
+  fill(last_price)
+  
+ipc_intraday %>% 
+  map_df(.f = ~ sum(is.na(.))) %>% 
+  pivot_longer(
+    cols = everything(), 
+    names_to = "variable", 
+    values_to = "missing_count"
+    )
+```
+
+Another check we can do is to count the number of prices per unique date. We can do this by just counting the frequency of each date. It must have a frequency of 391, since we have:
+
+\begin{equation} 
+\text{prices/day} = \text{hours} \times \text{minutes} + 1 = (6.5) \times 60 + 1 = 391 
+\end{equation}
+
+```{r}
+ipc_intraday %>% 
+  count(index_date, name = "date_count")
+```
+
+Printing the first 10 counts for each date... this looks correct. But now, let's get the unique values from that `date_count` column just to be sure:
+
+```{r}
+ipc_intraday %>% 
+  count(index_date, name = "date_count") %>% 
+  distinct(date_count)
+```
+
+The time series has been successfully padded.
 

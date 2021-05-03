@@ -85,7 +85,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Realized Higher Moment Measures</title>
+  <title>Realized Higher Moment Measures of Equity Returns</title>
 
   <meta property="description" itemprop="description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
 
@@ -96,21 +96,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <meta name="article:author" content="Alexis Solis Cancino" />
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Realized Higher Moment Measures" />
+  <meta property="og:title" content="Realized Higher Moment Measures of Equity Returns" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
   <meta property="og:locale" content="en_US" />
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary" />
-  <meta property="twitter:title" content="Realized Higher Moment Measures" />
+  <meta property="twitter:title" content="Realized Higher Moment Measures of Equity Returns" />
   <meta property="twitter:description" content="Part 1: Exploratory Data Analysis &amp; Data Preprocessing" />
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-02"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures of Equity Returns"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-02"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1716,7 +1716,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Realized Higher Moment Measures","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-02T00:00:00.000-05:00","citationText":"Cancino, 2021"}
+{"title":"Realized Higher Moment Measures of Equity Returns","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-02T00:00:00.000-05:00","citationText":"Cancino, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1726,7 +1726,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Realized Higher Moment Measures</h1>
+<h1>Realized Higher Moment Measures of Equity Returns</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
 <p><p>Part 1: Exploratory Data Analysis &amp; Data Preprocessing</p></p>
@@ -1743,8 +1743,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#introduction-importing-data">1. Introduction &amp; Importing Data</a></li>
+<li><a href="#introduction-importing-data">1. Introduction &amp; Importing Data</a>
+<ul>
 <li><a href="#missing-values">1.1 Missing values</a></li>
+</ul></li>
 <li><a href="#feature-engineering-data-wrangling">2. Feature Engineering &amp; Data Wrangling</a>
 <ul>
 <li><a href="#exploring-the-time-window-for-prices">2.1 Exploring the time window for prices</a>
@@ -1753,11 +1755,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#adjustments-to-the-time-series-index">2.1.2 Adjustments to the Time Series Index</a></li>
 <li><a href="#joining-the-data">2.1.3 Joining the Data</a></li>
 </ul></li>
+<li><a href="#price-imputation">2.2 Price Imputation</a></li>
 </ul></li>
 </ul>
 </nav>
 </div>
-<h2 id="introduction-importing-data">1. Introduction &amp; Importing Data</h2>
+<h1 id="introduction-importing-data">1. Introduction &amp; Importing Data</h1>
 <p>We’ll work with intraday data for the <em>S&amp;P/BMV IPC Equity Index</em>. The data consists of <code>n = 2,133,890</code> observations and <code>k = 23</code> variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.</p>
 <p>The first step is, of course, importing the data:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1785,29 +1788,29 @@ Show code
 </details>
 <pre><code>Rows: 2,133,890
 Columns: 23
-$ `#RIC`                  [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MX~
-$ `Date[L]`               [3m[38;5;246m&lt;dbl&gt;[39m[23m 19960102, 19960102, 19960102, 199601~
-$ `Time[L]`               [3m[38;5;246m&lt;time&gt;[39m[23m 08:36:00, 08:38:00, 08:39:00, 08:40~
-$ Type                    [3m[38;5;246m&lt;chr&gt;[39m[23m &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;, &quot;I~
-$ Open                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ High                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Low                     [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Last                    [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.47, 2777.47, 2777.47, 2777.47, ~
-$ Volume                  [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
-$ `Ave. Price`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 2777.470, 2777.470, 2777.470, 2777.4~
-$ VWAP                    [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Trades`            [3m[38;5;246m&lt;dbl&gt;[39m[23m 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ~
-$ `Correction Qualifiers` [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Open Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `High Bid`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Low Bid`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Close Bid`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Bids`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
-$ `Open Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `High Ask`              [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Low Ask`               [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `Close Ask`             [3m[38;5;246m&lt;lgl&gt;[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
-$ `No. Asks`              [3m[38;5;246m&lt;dbl&gt;[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~</code></pre>
+$ `#RIC`                  &lt;chr&gt; &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MXX&quot;, &quot;.MX~
+$ `Date[L]`               &lt;dbl&gt; 19960102, 19960102, 19960102, 199601~
+$ `Time[L]`               &lt;time&gt; 08:36:00, 08:38:00, 08:39:00, 08:40~
+$ Type                    &lt;chr&gt; &quot;Intraday 1Min&quot;, &quot;Intraday 1Min&quot;, &quot;I~
+$ Open                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ High                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Low                     &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Last                    &lt;dbl&gt; 2777.47, 2777.47, 2777.47, 2777.47, ~
+$ Volume                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Ave. Price`            &lt;dbl&gt; 2777.470, 2777.470, 2777.470, 2777.4~
+$ VWAP                    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Trades`            &lt;dbl&gt; 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, ~
+$ `Correction Qualifiers` &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Open Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Bid`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Bid`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Bid`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Bids`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ `Open Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `High Ask`              &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Low Ask`               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `Close Ask`             &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, ~
+$ `No. Asks`              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~</code></pre>
 </div>
 <p>So we have <code>boolean</code>, <code>character</code>, <code>numeric</code> and <code>time</code> types of columns. We also note that the names are not very friendly to work with. We fix that by creating a <em>string</em> vector and using that to replace the names in our data. The new names are:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1854,35 +1857,43 @@ Show code
 Show code
 </summary>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu">map_df</span><span class="op">(</span><span class="va">ipc_intraday</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="fu">map_df</span><span class="op">(</span><span class="va">ipc_intraday</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pivot_longer</span><span class="op">(</span>
+    cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>,
+    names_to <span class="op">=</span> <span class="st">&quot;variable&quot;</span>,
+    values_to <span class="op">=</span> <span class="st">&quot;missing_count&quot;</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">missing_count</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">23L</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
-<pre><code>Rows: 1
-Columns: 23
-$ ticker                [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ raw_date              [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ raw_time              [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ type                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ open                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ high                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ low                   [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ last                  [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ volume                [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ average_price         [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ vwap                  [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_trades             [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ correction_qualifiers [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ open_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ high_bid              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ low_bid               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ close_bid             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_bids               [3m[38;5;246m&lt;int&gt;[39m[23m 0
-$ open_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ high_ask              [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ low_ask               [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ close_ask             [3m[38;5;246m&lt;int&gt;[39m[23m 2133890
-$ no_ask                [3m[38;5;246m&lt;int&gt;[39m[23m 0</code></pre>
+<pre><code># A tibble: 23 x 2
+   variable              missing_count
+   &lt;chr&gt;                         &lt;int&gt;
+ 1 vwap                        2133890
+ 2 correction_qualifiers       2133890
+ 3 open_bid                    2133890
+ 4 high_bid                    2133890
+ 5 low_bid                     2133890
+ 6 close_bid                   2133890
+ 7 open_ask                    2133890
+ 8 high_ask                    2133890
+ 9 low_ask                     2133890
+10 close_ask                   2133890
+11 ticker                            0
+12 raw_date                          0
+13 raw_time                          0
+14 type                              0
+15 open                              0
+16 high                              0
+17 low                               0
+18 last                              0
+19 volume                            0
+20 average_price                     0
+21 no_trades                         0
+22 no_bids                           0
+23 no_ask                            0</code></pre>
 </div>
 <p>We see that there are 10 columns that have all values as <code>NA</code>, therefore we can remove all of these variables. The variables to remove are:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2345,7 +2356,169 @@ Show code
 10 1996-01-02 08:39:00 1996-01-02 08:39           2777.      0
 # ... with 2,194,673 more rows, and 1 more variable: no_trades &lt;dbl&gt;</code></pre>
 </div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="price-imputation">2.2 Price Imputation</h2>
+<p>We can check how many missing prices we have in the data:</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">count</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pull</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">&quot;,&quot;</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] &quot;91,696&quot;</code></pre>
+</div>
+<p>So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for <code>volume</code> and number of trades(<code>no_trades</code>). These can be imputed easily: substituting a zero everytime there’s no price data (this is a reasonable imputation). First, let’s check how many missing values we have per column:</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">map_df</span><span class="op">(</span>.f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pivot_longer</span><span class="op">(</span>
+    cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, 
+    names_to <span class="op">=</span> <span class="st">&quot;variable&quot;</span>, 
+    values_to <span class="op">=</span> <span class="st">&quot;missing_count&quot;</span>
+    <span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 6 x 2
+  variable   missing_count
+  &lt;chr&gt;              &lt;int&gt;
+1 index                  0
+2 index_date             0
+3 index_time             0
+4 last_price         91696
+5 volume             91696
+6 no_trades          91696</code></pre>
+</div>
+<p>We now impute the volume and number of trades and check that indeed there are no missing values:</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Impute volume and no_trades</span>
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">mutate</span><span class="op">(</span>
+    volume <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span>, <span class="fl">0</span>, <span class="va">volume</span><span class="op">)</span>,
+    no_trades <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span>, <span class="fl">0</span>, <span class="va">no_trades</span><span class="op">)</span>
+  <span class="op">)</span> 
+
+<span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">map_df</span><span class="op">(</span>.f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pivot_longer</span><span class="op">(</span>
+    cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, 
+    names_to <span class="op">=</span> <span class="st">&quot;variable&quot;</span>, 
+    values_to <span class="op">=</span> <span class="st">&quot;missing_count&quot;</span>
+    <span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 6 x 2
+  variable   missing_count
+  &lt;chr&gt;              &lt;int&gt;
+1 index                  0
+2 index_date             0
+3 index_time             0
+4 last_price         91696
+5 volume                 0
+6 no_trades              0</code></pre>
+</div>
+<p>Except for the first 6 data points, we will impute the prices by looking at the last available price. For the first 6 data points, we take a look at the first non-missing price, and use that one as a replacement value.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Impute first 6 prices</span>
+<span class="va">ipc_intraday</span><span class="op">$</span><span class="va">last_price</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span><span class="op">$</span><span class="va">last_price</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span>
+
+<span class="co"># Impute the rest of the prices using fill()</span>
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">fill</span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span>
+  
+<span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">map_df</span><span class="op">(</span>.f <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pivot_longer</span><span class="op">(</span>
+    cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, 
+    names_to <span class="op">=</span> <span class="st">&quot;variable&quot;</span>, 
+    values_to <span class="op">=</span> <span class="st">&quot;missing_count&quot;</span>
+    <span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 6 x 2
+  variable   missing_count
+  &lt;chr&gt;              &lt;int&gt;
+1 index                  0
+2 index_date             0
+3 index_time             0
+4 last_price             0
+5 volume                 0
+6 no_trades              0</code></pre>
+</div>
+<p>Another check we can do is to count the number of prices per unique date. We can do this by just counting the frequency of each date. It must have a frequency of 391, since we have:</p>
+<p><span class="math display">\[\begin{equation} 
+\text{prices/day} = \text{hours} \times \text{minutes} + 1 = (6.5) \times 60 + 1 = 391 
+\end{equation}\]</span></p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">count</span><span class="op">(</span><span class="va">index_date</span>, name <span class="op">=</span> <span class="st">&quot;date_count&quot;</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 5,613 x 2
+   index_date date_count
+   &lt;date&gt;          &lt;int&gt;
+ 1 1996-01-02        391
+ 2 1996-01-03        391
+ 3 1996-01-04        391
+ 4 1996-01-05        391
+ 5 1996-01-08        391
+ 6 1996-01-09        391
+ 7 1996-01-10        391
+ 8 1996-01-11        391
+ 9 1996-01-12        391
+10 1996-01-15        391
+# ... with 5,603 more rows</code></pre>
+</div>
+<p>Printing the first 10 counts for each date… this looks correct. But now, let’s get the unique values from that <code>date_count</code> column just to be sure:</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">count</span><span class="op">(</span><span class="va">index_date</span>, name <span class="op">=</span> <span class="st">&quot;date_count&quot;</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">date_count</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 1 x 1
+  date_count
+       &lt;int&gt;
+1        391</code></pre>
+</div>
+<p>The time series has been successfully padded.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -2353,6 +2526,15 @@ Show code
 <div class="d-appendix">
 </div>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
