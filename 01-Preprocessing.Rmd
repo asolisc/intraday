@@ -269,7 +269,7 @@ To achieve this, we'll introduce the concept of a *time series index*.
 
 Before we continue, we must create the so called **time series index**. To achieve this, a `dttm` (*datetime*) variable is created, which is the result of combining the `tidy_date` variable and the `tidy_time` variable. This combination gets the name of `tidy_dttm`. In this case, this is the variable by which the time series will be indexed. Below we print a small sample (first 6 rows) of this variable index:
 
-```{r creating-tidy-dttm}
+```{r creating-tidy-dttm, cache=TRUE}
 ipc_intraday <- ipc_intraday %>% 
   
   # Add time series index: tidy_dttm
