@@ -1758,6 +1758,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#price-imputation">2.2 Price Imputation</a></li>
 <li><a href="#time-series-signature">2.3 Time Series Signature</a></li>
 <li><a href="#computing-intraday-log-returns">2.4 Computing Intraday Log-Returns</a></li>
+<li><a href="#setting-overnight-returns-to-na">2.5 Setting Overnight Returns to NA</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2680,7 +2681,98 @@ Show code
 #   day &lt;int&gt;, hour &lt;int&gt;, minute &lt;int&gt;, wday &lt;dbl&gt;,
 #   wday_label &lt;ord&gt;, qday &lt;dbl&gt;, yday &lt;dbl&gt;, date_change &lt;lgl&gt;</code></pre>
 </div>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="setting-overnight-returns-to-na">2.5 Setting Overnight Returns to NA</h2>
+<p>For modeling purposes, we will assume that there is no overnight return. Therefore, we set the first log-return of each day to <code>NA</code>. The value <code>NA</code> is chosen because it will be useful for data-wrangling purposes.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+   
+  <span class="fu">mutate</span><span class="op">(</span>log_ret <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span>test <span class="op">=</span> <span class="va">date_change</span> <span class="op">==</span> <span class="cn">FALSE</span>,
+                          yes <span class="op">=</span> <span class="va">log_ret</span>, 
+                          no <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>We should only have one <code>NA</code> value per day. Let’s check that it is the case. We do that by checking that both numbers are equal, if that’s the case, we’ll get a <code>TRUE</code> value as output.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">total_na</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">log_ret</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">total_dates</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">index_date</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co"># Check for equality</span>
+<span class="fu"><a href="https://rdrr.io/r/base/all.equal.html">all.equal</a></span><span class="op">(</span><span class="va">total_na</span>, <span class="va">total_dates</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<p>We can check that all overnight returns are <code>NA</code>s. The variable <code>date_change</code> from the <em>time series index</em> is useful here. We extract the distinct values of the <code>log_ret</code> variable along with the <code>date_change</code> variable. We should get that all values for <code>date_change</code> are <code>TRUE</code>, and all values for <code>log_ret</code> are <code>NA</code>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date_change</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">log_ret</span>, <span class="va">date_change</span><span class="op">)</span> 
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 1 x 2
+  log_ret date_change
+    &lt;dbl&gt; &lt;lgl&gt;      
+1      NA TRUE       </code></pre>
+</div>
+<p>Moreover, the number of overnight returns that have been set to <code>NA</code> should be one less than the number of different dates we have for the <code>tidy_date</code> variable. Let’s check if this holds true:</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">date_change</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">select</span><span class="op">(</span><span class="va">index_date</span>, <span class="va">log_ret</span>, <span class="va">date_change</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">&quot;,&quot;</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] &quot;5,612&quot;</code></pre>
+</div>
+<p>We have <em>5,612</em> datapoints where <code>date_change = TRUE</code>. This should be one less than the amount of different dates (one less because the first date doesn’t have <code>date_change</code> set to one).</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">index_date</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">&quot;,&quot;</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] &quot;5,613&quot;</code></pre>
+</div>
+<p>We see that this holds true. We have correctly set the overnight returns to <code>NA</code>.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

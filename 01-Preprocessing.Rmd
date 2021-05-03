@@ -566,3 +566,60 @@ ipc_intraday <- ipc_intraday %>%
 ipc_intraday
 ```
 
+## 2.5 Setting Overnight Returns to NA
+
+For modeling purposes, we will assume that there is no overnight return. Therefore, we set the first log-return of each day to `NA`. The value `NA` is chosen because it will be useful for data-wrangling purposes.
+
+```{r}
+ipc_intraday <- ipc_intraday %>% 
+   
+  mutate(log_ret = ifelse(test = date_change == FALSE,
+                          yes = log_ret, 
+                          no = NA))
+```
+
+We should only have one `NA` value per day. Let's check that it is the case. We do that by checking that both numbers are equal, if that's the case, we'll get a `TRUE` value as output.
+
+```{r}
+total_na <- ipc_intraday %>% 
+  filter(is.na(log_ret)) %>% 
+  nrow()
+
+total_dates <- ipc_intraday %>% 
+  distinct(index_date) %>% 
+  nrow()
+
+# Check for equality
+all.equal(total_na, total_dates)
+```
+
+We can check that all overnight returns are `NA`s. The variable `date_change` from the *time series index* is useful here. We extract the distinct values of the `log_ret` variable along with the `date_change` variable. We should get that all values for `date_change` are `TRUE`, and all values for `log_ret` are `NA`.
+
+```{r}
+ipc_intraday %>% 
+  filter(date_change == 1) %>% 
+  distinct(log_ret, date_change) 
+```
+
+Moreover, the number of overnight returns that have been set to `NA` should be one less than the number of different dates we have for the `tidy_date` variable. Let's check if this holds true:
+
+```{r}
+ipc_intraday %>% 
+  filter(date_change == TRUE) %>% 
+  select(index_date, log_ret, date_change) %>% 
+  nrow() %>% 
+  format(big.mark = ",")
+```
+
+We have *5,612* datapoints where `date_change = TRUE`. This should be one less than the amount of different dates (one less because the first date doesn't have `date_change` set to one).
+
+```{r}
+ipc_intraday %>% 
+  distinct(index_date) %>% 
+  nrow() %>% 
+  format(big.mark = ",")
+```
+
+We see that this holds true. We have correctly set the overnight returns to `NA`.
+
+
