@@ -623,3 +623,22 @@ ipc_intraday %>%
 We see that this holds true. We have correctly set the overnight returns to `NA`.
 
 
+## 2.6 Removing Outliers
+
+Removing outliers in the log-return data is important. Therefore, we filter out log-returns whose absolute value is greater than some **predefined threshold**. We'll do this again later for 5-minute returns and 30-minute returns. We define the threshold such that we don't have anomalous 1-minute log-returns and at the same time, we are keeping \~ 99% of the original data. Log-returns that are outside of the defined threshold are immediately set to zero.
+
+```{r}
+# Predefined threshold
+threshold <- .10
+
+ipc_intraday <- ipc_intraday %>% 
+  
+  # we keep values below the threshold
+  mutate(log_ret = ifelse(test = abs(log_ret) < threshold, 
+                          yes = log_ret, 
+                          no = 0)
+         )
+```
+
+In this case we've set the variable `threshold` to the value `.10` as having a 10% 1-minute return would be extremely rare (most probably a mistake in the data). Fortunately, in this case, we have no anomalous returns so no log-return data had to be removed.
+

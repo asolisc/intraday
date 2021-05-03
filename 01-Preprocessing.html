@@ -1759,6 +1759,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#time-series-signature">2.3 Time Series Signature</a></li>
 <li><a href="#computing-intraday-log-returns">2.4 Computing Intraday Log-Returns</a></li>
 <li><a href="#setting-overnight-returns-to-na">2.5 Setting Overnight Returns to NA</a></li>
+<li><a href="#removing-outliers">2.6 Removing Outliers</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2772,6 +2773,29 @@ Show code
 <pre><code>[1] &quot;5,613&quot;</code></pre>
 </div>
 <p>We see that this holds true. We have correctly set the overnight returns to <code>NA</code>.</p>
+<h2 id="removing-outliers">2.6 Removing Outliers</h2>
+<p>Removing outliers in the log-return data is important. Therefore, we filter out log-returns whose absolute value is greater than some <strong>predefined threshold</strong>. We’ll do this again later for 5-minute returns and 30-minute returns. We define the threshold such that we don’t have anomalous 1-minute log-returns and at the same time, we are keeping ~ 99% of the original data. Log-returns that are outside of the defined threshold are immediately set to zero.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Predefined threshold</span>
+<span class="va">threshold</span> <span class="op">&lt;-</span> <span class="fl">.10</span>
+
+<span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># we keep values below the threshold</span>
+  <span class="fu">mutate</span><span class="op">(</span>log_ret <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span>test <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">log_ret</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">threshold</span>, 
+                          yes <span class="op">=</span> <span class="va">log_ret</span>, 
+                          no <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
+         <span class="op">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>In this case we’ve set the variable <code>threshold</code> to the value <code>.10</code> as having a 10% 1-minute return would be extremely rare (most probably a mistake in the data). Fortunately, in this case, we have no anomalous returns so no log-return data had to be removed.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
