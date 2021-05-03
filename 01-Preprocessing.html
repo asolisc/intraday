@@ -1757,6 +1757,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </ul></li>
 <li><a href="#price-imputation">2.2 Price Imputation</a></li>
 <li><a href="#time-series-signature">2.3 Time Series Signature</a></li>
+<li><a href="#computing-intraday-log-returns">2.4 Computing Intraday Log-Returns</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2640,7 +2641,46 @@ Show code
 5 08:34    14:56 
 6 08:35    14:55 </code></pre>
 </div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="computing-intraday-log-returns">2.4 Computing Intraday Log-Returns</h2>
+<p>We are finally ready to compute the intraday returns. We name the column <code>log_ret</code>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span>
+  
+  <span class="co"># Compute log-returns</span>
+  <span class="fu">mutate</span><span class="op">(</span>log_ret <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">last_price</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Relocate the columns</span>
+  <span class="fu">relocate</span><span class="op">(</span><span class="va">index_date</span>, <span class="va">index_time</span>, <span class="va">log_ret</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">ipc_intraday</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 2,194,683 x 22
+   index_date index_time log_ret index               last_price volume
+   &lt;date&gt;     &lt;time&gt;       &lt;dbl&gt; &lt;dttm&gt;                   &lt;dbl&gt;  &lt;dbl&gt;
+ 1 1996-01-02 08:30           NA 1996-01-02 08:30:00      2777.      0
+ 2 1996-01-02 08:31            0 1996-01-02 08:31:00      2777.      0
+ 3 1996-01-02 08:32            0 1996-01-02 08:32:00      2777.      0
+ 4 1996-01-02 08:33            0 1996-01-02 08:33:00      2777.      0
+ 5 1996-01-02 08:34            0 1996-01-02 08:34:00      2777.      0
+ 6 1996-01-02 08:35            0 1996-01-02 08:35:00      2777.      0
+ 7 1996-01-02 08:36            0 1996-01-02 08:36:00      2777.      0
+ 8 1996-01-02 08:37            0 1996-01-02 08:37:00      2777.      0
+ 9 1996-01-02 08:38            0 1996-01-02 08:38:00      2777.      0
+10 1996-01-02 08:39            0 1996-01-02 08:39:00      2777.      0
+# ... with 2,194,673 more rows, and 16 more variables:
+#   no_trades &lt;dbl&gt;, index_num &lt;dbl&gt;, diff &lt;dbl&gt;, year &lt;dbl&gt;,
+#   half &lt;int&gt;, quarter &lt;int&gt;, month &lt;dbl&gt;, month_label &lt;ord&gt;,
+#   day &lt;int&gt;, hour &lt;int&gt;, minute &lt;int&gt;, wday &lt;dbl&gt;,
+#   wday_label &lt;ord&gt;, qday &lt;dbl&gt;, yday &lt;dbl&gt;, date_change &lt;lgl&gt;</code></pre>
+</div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

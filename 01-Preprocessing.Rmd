@@ -550,3 +550,19 @@ tibble(
 )
 ```
 
+## 2.4 Computing Intraday Log-Returns
+
+We are finally ready to compute the intraday returns. We name the column `log_ret`.
+
+```{r}
+ipc_intraday <- ipc_intraday %>%
+  
+  # Compute log-returns
+  mutate(log_ret = log(last_price) - lag(log(last_price))) %>% 
+  
+  # Relocate the columns
+  relocate(index_date, index_time, log_ret, everything())
+
+ipc_intraday
+```
+
