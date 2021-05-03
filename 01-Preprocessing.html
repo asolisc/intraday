@@ -91,8 +91,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2021-05-02" />
-  <meta property="article:created" itemprop="dateCreated" content="2021-05-02" />
+  <meta property="article:published" itemprop="datePublished" content="2021-05-03" />
+  <meta property="article:created" itemprop="dateCreated" content="2021-05-03" />
   <meta name="article:author" content="Alexis Solis Cancino" />
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
@@ -110,7 +110,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures of Equity Returns"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-02"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Realized Higher Moment Measures of Equity Returns"]},{"type":"character","attributes":{},"value":["Part 1: Exploratory Data Analysis & Data Preprocessing\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation"]}},"value":[{"type":"character","attributes":{},"value":["Alexis Solis Cancino"]},{"type":"character","attributes":{},"value":["alexis.solisc@gmail.com"]},{"type":"character","attributes":{},"value":["ITAM"]}]}]},{"type":"character","attributes":{},"value":["2021-05-03"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_float","code_folding","theme"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["resources/theme.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1716,7 +1716,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Realized Higher Moment Measures of Equity Returns","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-02T00:00:00.000-05:00","citationText":"Cancino, 2021"}
+{"title":"Realized Higher Moment Measures of Equity Returns","description":"Part 1: Exploratory Data Analysis & Data Preprocessing","authors":[{"author":"Alexis Solis Cancino","authorURL":"alexis.solisc@gmail.com","affiliation":"ITAM","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-05-03T00:00:00.000-05:00","citationText":"Cancino, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1735,7 +1735,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="d-byline">
   Alexis Solis Cancino <a href="mailto:alexis.solisc@gmail.com" class="email">alexis.solisc@gmail.com</a> (ITAM)
   
-<br />2021-05-02
+<br />2021-05-03
 </div>
 
 <div class="d-article">
@@ -1756,6 +1756,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#joining-the-data">2.1.3 Joining the Data</a></li>
 </ul></li>
 <li><a href="#price-imputation">2.2 Price Imputation</a></li>
+<li><a href="#time-series-signature">2.3 Time Series Signature</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2518,7 +2519,128 @@ Show code
 1        391</code></pre>
 </div>
 <p>The time series has been successfully padded.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="time-series-signature">2.3 Time Series Signature</h2>
+<p>We can now create several time-related variables from the time series index. In this case, we’ll get <em>20 different time-related variables</em>. We’ll call this the <strong>Time Series Signature</strong>, which is a collection of time-related variables that will help for feature engineering and modeling. The variables computed are the following:</p>
+<ul>
+<li><code>index</code>: The time-index variable that is being decomposed.</li>
+<li><code>index_date</code>: The date component of the <code>index</code> variable.</li>
+<li><code>index_time</code>: The time component of the <code>index</code> variable.</li>
+<li><code>index_num</code>: The numeric value of the time series index (in seconds). The base is <code>1970-01-01 00:00:00</code> which has the value of 0.</li>
+<li><code>diff</code>: The difference (in seconds) from the previous numeric <code>index</code> value.</li>
+<li><code>year</code>: The year of the <em>time series</em> <code>index</code>.</li>
+<li><code>half</code>: The <em>half component</em> of the index (i.e. to which semester does the date belong to).</li>
+<li><code>quarter</code>: The <em>quarter component</em> of the index (i.e. to which quarter does the date belong to).</li>
+<li><code>month</code>: The <em>month component</em> of the index (with base 1 - that is, January = 1 and so on).</li>
+<li><code>month_label</code>: The three-letter month label as an ordered categorical variable. It begins with <em>Jan</em> and ends with <em>Dec</em>.</li>
+<li><code>day</code>: The <em>day</em> component of the <code>index</code>.</li>
+<li><code>hour</code>: The <em>hour</em> component of the <code>index</code> (24-hour scale).</li>
+<li><code>minute</code>: The <em>minute</em> component of the <code>index</code> (from 0 - 59).</li>
+<li><code>wday</code>: The day of the week with base 1. Monday = 1 and Sunday = 7.</li>
+<li><code>wday_label</code>: The three-letter label for day of the week as an ordered categorical variable. It begins with <code>Mon</code> and ends with <code>Sun</code>.</li>
+<li><code>qday</code>: The day of the quarter.</li>
+<li><code>yday</code>: The day of the year.</li>
+<li><code>mweek</code>: The week of the month.</li>
+<li><code>week</code>: The week number of the year.</li>
+<li><code>mday7</code>: The integer division of the day of the month by seven, which returns the <em>nth</em> instance the day has appeared in that month.</li>
+<li><code>date_change</code>: A <em>boolean</em> variable. <code>TRUE</code> indicates that the date has changed against the previous index value. <code>FALSE</code> indicates no change.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  
+  <span class="co"># Create time series signature</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    index_num   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    diff        <span class="op">=</span> <span class="va">index_num</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">index_num</span><span class="op">)</span>,
+    year        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    half        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/quarter.html">semester</a></span><span class="op">(</span><span class="va">index</span>, with_year <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
+    quarter     <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/quarter.html">quarter</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    month       <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    month_label <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span><span class="op">(</span><span class="va">index</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
+    day         <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">day</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    hour        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/hour.html">hour</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    minute      <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/minute.html">minute</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    wday        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">index</span>, week_start <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
+    wday_label  <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">index</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
+    qday        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">qday</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    yday        <span class="op">=</span> <span class="fu"><a href="http://lubridate.tidyverse.org/reference/day.html">yday</a></span><span class="op">(</span><span class="va">index</span><span class="op">)</span>,
+    <span class="co"># mweek       =</span>
+    <span class="co"># week        = lubridate::week(),</span>
+    <span class="co"># mday7       = day %% 7,</span>
+    date_change <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">index_date</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">index_date</span><span class="op">)</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>
+  <span class="op">)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Lastly, we do a quick check for:</p>
+<ol type="1">
+<li>The time series signature doesn’t contain weekend days. We check this by printing the unique values for the weekday label stored in the <code>wday_label</code> variable.</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">wday_label</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 5 x 1
+  wday_label
+  &lt;ord&gt;     
+1 Tue       
+2 Wed       
+3 Thu       
+4 Fri       
+5 Mon       </code></pre>
+</div>
+<ol start="2" type="1">
+<li>The time signatures only contains hours from <code>08:00</code> through <code>15:00</code>. To be sure, we print the first and last 6 unique values of the <code>index_time</code> variable.</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First 10 unique values</span>
+<span class="va">earliest_index</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">index_time</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pull</span><span class="op">(</span><span class="va">index_time</span><span class="op">)</span>
+
+<span class="co"># Last 10 unique values</span>
+<span class="va">latest_index</span> <span class="op">&lt;-</span> <span class="va">ipc_intraday</span> <span class="op">%&gt;%</span> 
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">index_time</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">distinct</span><span class="op">(</span><span class="va">index_time</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">pull</span><span class="op">(</span><span class="va">index_time</span><span class="op">)</span>
+
+<span class="fu">tibble</span><span class="op">(</span>
+  earliest <span class="op">=</span> <span class="va">earliest_index</span>,
+  latest <span class="op">=</span> <span class="va">latest_index</span>
+<span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code># A tibble: 6 x 2
+  earliest latest
+  &lt;time&gt;   &lt;time&gt;
+1 08:30    15:00 
+2 08:31    14:59 
+3 08:32    14:58 
+4 08:33    14:57 
+5 08:34    14:56 
+6 08:35    14:55 </code></pre>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
