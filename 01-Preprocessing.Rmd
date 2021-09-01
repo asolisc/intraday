@@ -232,7 +232,7 @@ ipc_intraday %>%
     breaks = seq(0, 5000, length.out = 11)
     ) +
   labs(
-    title = "Number of Trades per Minute from 8:00AM-8:59AM",
+    title = "Number of Price Levels per Minute from 8:00AM-8:59AM",
     x = "Minute",
     y = NULL
   )
@@ -255,7 +255,7 @@ ipc_intraday %>%
   scale_x_continuous(breaks = seq(0, 60, 5)) +
   scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
     labs(
-    title = "Number of Trades per Minute from 3:00PM-3:59PM",
+    title = "Number of Price Levels per Minute from 3:00PM-3:59PM",
     x = "Minute",
     y = NULL
   )
@@ -395,7 +395,7 @@ ipc_intraday %>%
   format(big.mark = ",")
 ```
 
-So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for `volume` and number of trades(`no_trades`). These can be imputed easily: substituting a zero everytime there's no price data (this is a reasonable imputation). First, let's check how many missing values we have per column:
+So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for `volume` and number of trades (`no_trades`). These can be imputed easily: substituting a zero everytime there's no price data (this is a reasonable imputation). First, let's check how many missing values we have per column:
 
 ```{r}
 ipc_intraday %>% 
