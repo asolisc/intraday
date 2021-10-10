@@ -68,7 +68,7 @@ So we have `boolean`, `character`, `numeric` and `time` types of columns. We als
 # Create vector with new column names
 column_names <- c("ticker","raw_date","raw_time","type",
                   "open","high","low","last","volume",
-                  "average_price","vwap","no_trades",
+                  "average_price","vwap","num_trades",
                   "correction_qualifiers","open_bid",
                   "high_bid","low_bid","close_bid",
                   "no_bids","open_ask","high_ask","low_ask",
@@ -261,9 +261,9 @@ ipc_intraday %>%
   )
 ```
 
-Here, the time with most trades is 3:00PM exactly. Following *Liu, Patton, Sheppard (2013)*, we'll discard any prices that were quoted outside normal business hours. Hence, we want prices that lie between `08:30` and `15:00`.
+Here, the time with most trades is 3:00PM exactly. Following *Liu, Patton, Sheppard (2013)*, we'll discard any prices that were quoted outside normal business hours.
 
-To achieve this, we'll introduce the concept of a *time series index*.
+To achieve this efficiently, we'll introduce the concept of a *time series index*.
 
 ### 2.1.1 Time Series Index
 
@@ -395,7 +395,7 @@ ipc_intraday %>%
   format(big.mark = ",")
 ```
 
-So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for `volume` and number of trades (`no_trades`). These can be imputed easily: substituting a zero everytime there's no price data (this is a reasonable imputation). First, let's check how many missing values we have per column:
+So we have almost 92K missing prices, which represent a little over 4% of the total data. Therefore, it is acceptable if we impute the prices. We also have missing data for `volume` and number of trades (`num_trades`). These can be imputed easily: substituting a zero everytime there's no price data (this is a reasonable imputation). First, let's check how many missing values we have per column:
 
 ```{r}
 ipc_intraday %>% 
@@ -410,11 +410,11 @@ ipc_intraday %>%
 We now impute the volume and number of trades and check that indeed there are no missing values:
 
 ```{r}
-# Impute volume and no_trades
+# Impute volume and num_trades
 ipc_intraday <- ipc_intraday %>% 
   mutate(
     volume = if_else(is.na(last_price), 0, volume),
-    no_trades = if_else(is.na(last_price), 0, no_trades)
+    num_trades = if_else(is.na(last_price), 0, num_trades)
   ) 
 
 ipc_intraday %>% 
@@ -575,7 +575,7 @@ ipc_intraday <- ipc_intraday %>%
    
   mutate(log_ret = ifelse(test = date_change == FALSE,
                           yes = log_ret, 
-                          no = NA))
+                          no = NA_real_))
 ```
 
 We should only have one `NA` value per day. Let's check that it is the case. We do that by checking that both numbers are equal, if that's the case, we'll get a `TRUE` value as output.
