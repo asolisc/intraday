@@ -27,7 +27,11 @@ theme_decima <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
@@ -51,7 +55,11 @@ theme_roboto <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
@@ -77,7 +85,11 @@ theme_plex <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
@@ -102,7 +114,11 @@ theme_fira <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
@@ -125,7 +141,11 @@ theme_overpass <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
@@ -150,17 +170,49 @@ theme_opensans <- function(base_size = 13){
       
       # Legends
       legend.position = "top",
-      legend.direction = "horizontal"
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
     )
 }
 
+
+
+# Petrona Theme ------------------------------------------------------------
+
+
+theme_petrona <- function(.base_size = 13){
+  
+  theme_minimal(base_family = "Petrona", base_size = .base_size) +
+    
+    theme(
+      # Remove minor grid lines
+      panel.grid.minor = element_blank(),
+      
+      # Far-left title position
+      plot.title.position = "plot",
+      
+      # Background color
+      # plot.background = element_rect(fill = "#F4F3EE"),
+      
+      # Legends
+      legend.position = "top",
+      legend.direction = "horizontal",
+      
+      # left-aligned caption
+      plot.caption.position = 'plot',
+      plot.caption = element_text(hjust = 0)
+    )
+}
 
 
 
 # Set Theme & Colors ---------------------------------------------------------------
 
 ggplot2::theme_set(
-  theme_decima()
+  theme_fira()
   )
 
 
@@ -175,7 +227,7 @@ amazing_colors <- c(
   # "#EF6101", "#47802B", "#FDAC07"
 )
 
-
+blog_colors <- c("#0018A8", "#4DF4C1", "#454FE6", "#00CF7A")
 
 
 
@@ -186,17 +238,26 @@ amazing_colors <- c(
 # Play --------------------------------------------------------------------
 
 
-# palmerpenguins::penguins %>% 
-#   as_tibble() %>% 
-#   drop_na %>% 
-#   ggplot(aes(bill_length_mm, flipper_length_mm, colour = species)) +
-#   geom_point(size = 3) +
-#   labs(
-#     title = "Palmer Penguis",
-#     x = "Bill Length (mm)",
-#     y = "Flipper Length (mm)"
-#   ) +
-#   scale_colour_manual(values = amazing_colors)
+
+palmerpenguins::penguins %>%
+  as_tibble() %>%
+  drop_na %>%
+  filter(species %in% c("Adelie", "Chinstrap")) %>% 
+  ggplot(aes(bill_length_mm, flipper_length_mm, colour = species)) +
+  geom_point(size = 3) +
+  labs(
+    title = "Palmer Penguins",
+    subtitle = "– sub",
+    x = "Bill Length (mm)",
+    y = "Flipper Length (mm)",
+    color = NULL,
+    caption = paste0("Figure 1:  is a Toronto, Ontario-based online social networking service for healthcare professionals to post and comment on medical images.",
+    "Figure 1 was founded in Toronto by Dr. Joshua Landy, Richard Penner and Gregory Levey.",
+    "The platform launched in North America in May 2013 and is now available in more than 100 countries.[2]",
+    "The privately held company reports more than 1 million healthcare professionals use its app and website.[3]") %>% str_wrap(width = 140)
+  ) +
+  scale_colour_manual(values = new_colors) +
+  theme_decima()
 #   
 # 
 
