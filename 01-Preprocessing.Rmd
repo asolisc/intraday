@@ -34,7 +34,6 @@ library(arrow)       # for columnar super-fast manipulation
 library(lubridate)   # working with dates
 library(hms)         # working with times
 library(here)        # path management
-# library(readxl)
 
 
 # --- Modeling Time Series ---
@@ -43,6 +42,7 @@ library(timetk)
 
 # --- Source ggplot2 themes ---
 source(here("resources/ggplot2_themes.R"))
+theme_set(theme_fira())
 ```
 
 # 1. Introduction & Importing Data
@@ -53,7 +53,7 @@ The first step is, of course, importing the data:
 
 ```{r, echo = T}
 # Read the parquet file that contains raw data
-ipc_intraday <- read_parquet(file = here("data-raw/raw_MEXICO_IPC.parquet"))
+ipc_intraday <- read_parquet(file = here("data/raw/raw_MEXICO_IPC.parquet"))
 ```
 
 First thing we do is take a look at the columns and data types that we have:
@@ -196,21 +196,53 @@ tibble(
 We can also visualize how many datapoints we have, per hour.
 
 ```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
-ipc_intraday %>% 
-  mutate(tidy_hour = as.factor(hour(tidy_time))) %>% 
-  count(tidy_hour, sort = T, name = "trades_per_hour") %>% 
+# Compute trades per hour interval
+trades_hour_df <- ipc_intraday %>% 
+  mutate(tidy_hour = hour(tidy_time)) %>%
+  count(tidy_hour, sort = T, name = "trades_per_hour")
+
+# Compute total trades
+total_trades <- trades_hour_df %>% pull(trades_per_hour) %>% sum()
+
+# Get first and last hour in the data
+first_hour <- trades_hour_df %>% pull(tidy_hour) %>% min()
+last_hour <- trades_hour_df %>% pull(tidy_hour) %>% max()
+
+# Make plot
+trades_hour_df %>% 
+  mutate(perc_trades = trades_per_hour/total_trades) %>% 
   # mutate(tidy_hour = fct_reorder(tidy_hour, .x = trades_per_hour, .desc = T)) %>%
-  ggplot(aes(tidy_hour, trades_per_hour)) +
-  geom_col(aes(fill = between(x = as.numeric(tidy_hour), 
-                              left = 5, 
-                              right = 10)),
-           show.legend = F) +
-  scale_fill_manual(values = amazing_colors[c(2,8)]) +
-  scale_y_continuous(labels = scales::number_format(big.mark = ",")) +
+  ggplot(aes(tidy_hour, perc_trades)) +
+  geom_col(
+    aes(fill = between(x = as.numeric(tidy_hour), 
+                       left = 8, 
+                       right = 15)),
+    show.legend = F) +
+  geom_text(aes(label = scales::percent(perc_trades, 
+                                       accuracy = .1)),
+                                       # suffix = "k",
+                                       # scale = 1/1e3)),
+            nudge_y = 0.5/100,
+            size = 8/.pt
+            ) +
+  scale_fill_manual(values = blog_colors) +
+  scale_x_continuous(breaks = first_hour:last_hour,
+                     expand = expansion(mult = 0.005)
+                     ) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(c(0, 0.05))
+    ) +
   labs(
-    title = "No. Prices per Hour in the Sample",
+    title = "Prices per Hour in the Sample (%)",
+    subtitle = glue::glue("Total observations: {scales::number(total_trades, big.mark = ',')}"),
     x = "Hour",
     y = NULL
+  ) +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.line.x = element_line(),
+    axis.text.y = element_blank()
   )
 ```
 
@@ -218,24 +250,31 @@ From the plot above, we see that most of the prices lie between 8:00AM - 3:00PM.
 
 ```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
 ipc_intraday %>% 
-  mutate(tidy_hour = as.factor(hour(tidy_time)),
+  mutate(tidy_hour = hour(tidy_time),
          tidy_minute = minute(tidy_time)) %>%
   filter(tidy_hour == 8) %>% 
   count(tidy_minute, sort = T, name = "trades_per_minute") %>% 
   ggplot(aes(tidy_minute, trades_per_minute)) +
   geom_col(aes(fill = tidy_minute < 30),
            show.legend = F) +
-  scale_fill_manual(values = amazing_colors[c(8,2)]) +
-  scale_x_continuous(breaks = seq(0, 60, 5)) +
+  scale_fill_manual(values = blog_colors) +
+  scale_x_continuous(
+    breaks = c(seq(0, 55, 5),59),
+    expand = expansion(0.009)
+    ) +
   scale_y_continuous(
-    labels = scales::number_format(big.mark = ","),
-    breaks = seq(0, 5000, length.out = 11)
+    labels = scales::number_format(big.mark = ",",
+                                   accuracy = 1,
+                                   scale = 1/1e3, 
+                                   suffix = "k"),
+    breaks = scales::breaks_pretty(),
+    expand = expansion(mult = 0.05)
     ) +
   labs(
     title = "Number of Price Levels per Minute from 8:00AM-8:59AM",
     x = "Minute",
     y = NULL
-  )
+  );
 ```
 
 As expected, the second half-hour is the most active (that is, the period from 8:30AM - 8:59AM).

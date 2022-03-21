@@ -227,7 +227,7 @@ amazing_colors <- c(
   # "#EF6101", "#47802B", "#FDAC07"
 )
 
-blog_colors <- c("#0018A8", "#4DF4C1", "#454FE6", "#00CF7A")
+blog_colors <- c("#0018A8", "#00CF7A", "#E7553C", "#454FE6", "#4DF4C1", "#F26F20")
 
 
 
@@ -256,7 +256,7 @@ palmerpenguins::penguins %>%
     "The platform launched in North America in May 2013 and is now available in more than 100 countries.[2]",
     "The privately held company reports more than 1 million healthcare professionals use its app and website.[3]") %>% str_wrap(width = 140)
   ) +
-  scale_colour_manual(values = new_colors) +
+  scale_colour_manual(values = blog_colors) +
   theme_decima()
 #   
 # 
