@@ -34,6 +34,8 @@ library(arrow)       # for columnar super-fast manipulation
 library(lubridate)   # working with dates
 library(hms)         # working with times
 library(here)        # path management
+library(scales)
+library(dtplyr)
 
 
 # --- Modeling Time Series ---
