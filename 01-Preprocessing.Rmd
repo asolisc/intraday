@@ -34,8 +34,8 @@ library(arrow)       # for columnar super-fast manipulation
 library(lubridate)   # working with dates
 library(hms)         # working with times
 library(here)        # path management
-library(scales)
-library(dtplyr)
+library(scales)      # scaling in ggplot2
+library(dtplyr)      # data.table backend for dplyr
 
 
 # --- Modeling Time Series ---
