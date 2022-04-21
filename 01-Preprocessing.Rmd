@@ -691,5 +691,5 @@ After all this preprocessing steps, we are ready to write to data to disk. We wi
 ```{r}
 # Write data to parquet
 ipc_intraday %>% 
-  write_parquet(sink = here("data-processed/intraday_ipc.parquet"))
+  write_parquet(sink = here("data/processed/intraday_ipc.parquet"))
 ```

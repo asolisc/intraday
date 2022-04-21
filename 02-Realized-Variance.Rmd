@@ -75,11 +75,130 @@ future::plan(strategy = multiprocess, workers = 11)
 
 # --- Setup the ggplot theme ---
 source("resources/ggplot2_themes.R")
+theme_set(theme_roboto())
 ```
 
 ```{r}
 # Read the data
-ipc_intraday <- read_parquet(here("data-processed/intraday_ipc.parquet"))
+ipc_intraday <- read_parquet(here("data/processed/intraday_ipc.parquet"))
 ```
 
-# Realized Volatility
+# 1. Realized Volatility
+
+To estimate daily volatility of equity returns, we can use the intraday data, in particular, the intraday returns. Since the expected value of the intraday returns is zero, a good estimator of variance is the sum of the squared returns.
+
+We can now compute the realized variance for each day:
+
+```{r}
+rv_df <- ipc_intraday %>% 
+  filter(!is.na(log_ret)) %>% 
+  mutate(log_ret_sq = log_ret^2) %>% 
+  group_by(index_date) %>% 
+  summarise(RV = sum(log_ret_sq),
+            
+            # annualized realized volatility
+            RVol = sqrt(252 * RV),
+            .groups = "drop") %>% 
+  
+  # Get rid of date "2001-09-12", which has a 0 RV.
+  filter(!RVol == 0)
+
+rv_df
+```
+
+
+
+Now let's plot the RVs:
+
+```{r}
+#| layout: "l-body-outset"
+#| fig.width: 8
+#| fig.asp: 0.618
+
+rv_plot <- rv_df %>% 
+  # filter_time("1996" ~ "end") %>%
+  ggplot(mapping = aes(x = index_date, y = RV)) +
+  geom_col(color = blog_colors[1]) +
+  labs(
+    title = "Realized Variance: S&P/BMV IPC Index",
+    subtitle = "– Daily Realized Variance",
+    x = NULL,
+    y = NULL
+  ) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = scales::breaks_pretty(n = 12),
+    expand = expansion(c(0.01, 0.05))
+  ) +
+  scale_y_continuous(
+    breaks = scales::breaks_extended(n = 8),
+    labels = scales::number_format(accuracy = .001),
+    expand = expansion(c(0, 0.13))
+  ) +
+  theme(
+    panel.grid.major.x = element_blank()
+  )
+
+rv_plot
+```
+
+
+Let's check the ACF on the RVs:
+
+```{r}
+#| layout: "l-body-outset"
+#| fig.width: 8
+#| fig.asp: 0.618
+
+
+rv_df %>% 
+  pull(RV) %>% 
+  acf(lag.max = 100, plot = F) %>% 
+  broom::tidy() %>% 
+  filter(lag != 0) %>% 
+  ggplot(aes(lag, acf)) +
+  geom_line(aes(color = lag >= 10)) +
+  geom_hline(yintercept = 0.2, linetype = 2) +
+  scale_x_continuous(
+    breaks = scales::breaks_pretty(n = 12),
+    expand = expansion(c(0.015, 0.05))
+  ) +
+  scale_y_continuous(
+    breaks = scales::breaks_extended(),
+    labels = scales::number_format(accuracy = .01),
+    expand = expansion(c(0.02, 0.13))
+  ) +
+  scale_color_manual(values = blog_colors) +
+  guides(color = 'none') +
+  labs(
+    title = "Autocorrelation of realized variance",
+    subtitle = "– The x-axis indicates the k-th lag order.",
+    x = NULL,
+    y = NULL,
+    caption = "Figure 2: the blue line indicates the first 10-lag order autocorrelations for the RVs."
+  ) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    
+  )
+  
+```
+
+
+
+
+# 2. RV Sparse
+
+An *RV Sparse* estimator consists of calculating the realized variance but with a sample that is less frequent than the 1-minute grid. Instead, it is sampled in an *s*-minute grid (where $s \geq 1$).
+
+Here, we will use different combinations of $s$ such as `s = 5`, `s = 10`, `s = 15`, and `s = 30`. In order to plot a *signature plot*, we will also sample from $s \in [1, 120]$.
+
+
+```{r}
+# Define progress bar
+pb <- progress::progress_bar$new(
+  format = " computing RVs [:bar] :percent eta: :eta",
+  total = 100,
+  clear = FALSE
+)
+```
