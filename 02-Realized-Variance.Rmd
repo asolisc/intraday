@@ -65,7 +65,7 @@ library(here)
 
 # Speed
 # library(data.table)
-# library(dtplyr)
+library(dtplyr)
 library(arrow)
 library(furrr)
 
@@ -128,11 +128,11 @@ rv_plot <- rv_df %>%
   scale_x_date(
     date_labels = "%Y", 
     breaks = scales::breaks_pretty(n = 12),
-    expand = expansion(c(0.01, 0.05))
+    expand = expansion(c(0.01, 0.01))
   ) +
   scale_y_continuous(
     breaks = scales::breaks_extended(n = 8),
-    labels = scales::number_format(accuracy = .001),
+    labels = scales::number_format(accuracy = .0001),
     expand = expansion(c(0, 0.13))
   ) +
   theme(
@@ -202,3 +202,28 @@ pb <- progress::progress_bar$new(
   clear = FALSE
 )
 ```
+
+
+```{r}
+# Keep fixing this chunk for RV sparse function
+ipc_intraday %>%
+  dtplyr::lazy_dt() %>% 
+  group_by(index_date) %>% 
+  mutate(id = row_number() - 1, .after = 3) %>% 
+  filter(id %% 240 == 0) %>%
+  group_by(index_date) %>% 
+    summarise(
+      index_time,
+      sparse_return = log(last_price/lag(last_price)),
+      .groups = 'drop') %>% 
+  left_join(
+    ipc_intraday %>% 
+      select(index_date, index_time, last_price),
+    by = c("index_date", "index_time")
+    ) %>% 
+  as_tibble() %>% 
+  slice(1:1000) %>% 
+  View
+  
+```
+
