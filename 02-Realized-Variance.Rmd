@@ -1,7 +1,7 @@
 ---
 title: "Realized Higher Moment Measures"
 description: |
-  Exploring Realized Higher Moment Measures on the S&P/BMV IPC Index
+  Part 2: Exploring Realized Higher Moment Measures on the S&P/BMV IPC Index
 author:
   - name: Alexis Solis Cancino
     affiliation: ITAM
