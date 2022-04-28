@@ -154,33 +154,43 @@ Let's check the ACF on the RVs:
 
 rv_df %>% 
   pull(RV) %>% 
-  acf(lag.max = 100, plot = F) %>% 
+  acf(lag.max = 200, plot = F) %>% 
   broom::tidy() %>% 
   filter(lag != 0) %>% 
   ggplot(aes(lag, acf)) +
-  geom_line(aes(color = lag >= 10)) +
-  geom_hline(yintercept = 0.2, linetype = 2) +
+  geom_line(aes(color = lag >= 10), size = 1.1) +
+  
+  # Bartlett Errors
+  geom_hline(yintercept = 2/sqrt(nrow(rv_df)), 
+             linetype = 2,
+             color = blog_colors[4]) +
+  geom_hline(yintercept = -2/sqrt(nrow(rv_df)), 
+             linetype = 2,
+             color = blog_colors[4]) +
+  
+  
+  geom_hline(yintercept = 0, linetype = 1) +
   scale_x_continuous(
     breaks = scales::breaks_pretty(n = 12),
-    expand = expansion(c(0.015, 0.05))
+    expand = expansion(c(0.015, 0.03))
   ) +
   scale_y_continuous(
-    breaks = scales::breaks_extended(),
+    breaks = scales::breaks_extended(n = 8),
     labels = scales::number_format(accuracy = .01),
-    expand = expansion(c(0.02, 0.13))
+    expand = expansion(c(0.02, 0.13)),
+    limits = c(-0.1,0.5)
   ) +
   scale_color_manual(values = blog_colors) +
   guides(color = 'none') +
   labs(
-    title = "Autocorrelation of realized variance",
+    title = "Autocorrelation function of realized variance",
     subtitle = "– The x-axis indicates the k-th lag order.",
     x = NULL,
     y = NULL,
-    caption = "Figure 2: the blue line indicates the first 10-lag order autocorrelations for the RVs."
+    caption = "Figure 2: the blue line indicates the first 10-lag order autocorrelations for the RVs.\nBartlett confidence intervals in dashed, purple lines."
   ) +
   theme(
     panel.grid.major.x = element_blank(),
-    
   )
   
 ```
@@ -210,8 +220,6 @@ This is where *volatility signature plots* (VSP) will help; these are a graphica
 
 1.  Compute $RV_{t+1}^s$ for values of $s$ going from 1 to 120 minutes.
 
-
-
 ```{r}
 # Define progress bar
 pb <- progress::progress_bar$new(
@@ -239,7 +247,7 @@ ipc_sparse <- sparse_grid %>%
 RV_means <- ipc_sparse %>% 
   group_by(sparse_grid) %>% 
   summarise(
-    mean_RV_sparse = mean(RV_sparse),
+    mean_RV_sparse = mean(RVol_sparse),
     .groups = "drop"
   )
 ```
@@ -249,8 +257,7 @@ RV_means <- ipc_sparse %>%
 ```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
 RV_means %>% 
   ggplot(aes(sparse_grid , mean_RV_sparse)) +
-  geom_point(alpha = 0.6, 
-             colour = blog_colors[1], 
+  geom_point(colour = blog_colors[2], 
              size = 2) +
   labs(
     title = "Signature Plot for the Annualized RV Sparse",
@@ -259,3 +266,17 @@ RV_means %>%
   ) +
   scale_y_continuous(labels = number_format())
 ```
+
+3.  Look for the smallest $s$ such that the average RV does not change much for values of $s$ larger than this number.
+
+
+
+# HAR Model
+
+The HAR (Heterogeneous Autoregression) model or mixed-frequency model provides a tool for modeling the seemingly long-memory features of realized volatility.
+
+We can start by defining the _h_-day RV from the 1-day RV as follows:
+
+$$
+RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
+$$
