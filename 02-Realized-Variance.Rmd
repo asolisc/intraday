@@ -123,7 +123,8 @@ rv_plot <- rv_df %>%
     title = "Realized Variance: S&P/BMV IPC Index",
     subtitle = "– Daily Realized Variance",
     x = NULL,
-    y = NULL
+    y = NULL,
+    caption = "Figure 1: Daily realized variance (RV) for the S&P/BMV IPC Index.\nThe RV is calculated as the sum of squared intraday returns."
   ) +
   scale_x_date(
     date_labels = "%Y", 
@@ -194,6 +195,23 @@ An *RV Sparse* estimator consists of calculating the realized variance but with 
 Here, we will use different combinations of $s$ such as `s = 5`, `s = 10`, `s = 15`, and `s = 30`. In order to plot a *signature plot*, we will also sample from $s \in [1, 120]$.
 
 
+## Volatility signature plot
+
+The Sparse RV Estimator is calculated using an *s*-minute grid ($s \geq 1$):
+
+$$ 
+RV_{t+1}^s = \sum \limits_{j=1}^{m/s} R^2_{t+js/m} 
+$$
+
+
+Now the problem lies in the choice of the sub-sampling parameter $s$, a problem which represents a typical bias-variance trade-off. That is because ...
+
+This is where *volatility signature plots* (VSP) will help; these are a graphical tool that helps us choose the sub-sampling parameter $s$. We do a VSP in the following manner:
+
+1.  Compute $RV_{t+1}^s$ for values of $s$ going from 1 to 120 minutes.
+
+
+
 ```{r}
 # Define progress bar
 pb <- progress::progress_bar$new(
@@ -201,29 +219,43 @@ pb <- progress::progress_bar$new(
   total = 100,
   clear = FALSE
 )
+
+# Define a vector with all the "s-grid" parameters
+sparse_grid <- seq(from = 1, 
+                   to = 60, 
+                   by = 1)
+
+
+# Create a tibble with all the nested data
+ipc_sparse <- sparse_grid %>% 
+  future_map_dfr(~ split_intraday(data = ipc_intraday, 
+                                  grid = .x) %>% 
+                   rv_sparse(),
+                 .progress = T)
 ```
 
-
-```{r}
-# Keep fixing this chunk for RV sparse function
-ipc_intraday %>%
-  dtplyr::lazy_dt() %>% 
-  group_by(index_date) %>% 
-  mutate(id = row_number() - 1, .after = 3) %>% 
-  filter(id %% 240 == 0) %>%
-  group_by(index_date) %>% 
-    summarise(
-      index_time,
-      sparse_return = log(last_price/lag(last_price)),
-      .groups = 'drop') %>% 
-  left_join(
-    ipc_intraday %>% 
-      select(index_date, index_time, last_price),
-    by = c("index_date", "index_time")
-    ) %>% 
-  as_tibble() %>% 
-  slice(1:1000) %>% 
-  View
-  
+```{r unnest-RV-sparse}
+# Get the mean for each RV sparse:
+RV_means <- ipc_sparse %>% 
+  group_by(sparse_grid) %>% 
+  summarise(
+    mean_RV_sparse = mean(RV_sparse),
+    .groups = "drop"
+  )
 ```
 
+2.  Scatter plot the average RV across days on the vertical axis against $s$ on the horizontal axis.
+
+```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
+RV_means %>% 
+  ggplot(aes(sparse_grid , mean_RV_sparse)) +
+  geom_point(alpha = 0.6, 
+             colour = blog_colors[1], 
+             size = 2) +
+  labs(
+    title = "Signature Plot for the Annualized RV Sparse",
+    x = "Minutes",
+    y = "RV"
+  ) +
+  scale_y_continuous(labels = number_format())
+```
