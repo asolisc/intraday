@@ -53,7 +53,7 @@ library(tidyquant)
 # library(ggthemes)
 library(scales)
 # library(ghibli)
-library(cowplot)
+library(patchwork)
 # library(plotly)
 library(gt)
 library(progress)
@@ -71,11 +71,16 @@ library(furrr)
 
 
 # Setup parallelization plan
-future::plan(strategy = multiprocess, workers = 11)
+future::plan(strategy = 'multisession', workers = 11)
 
 # --- Setup the ggplot theme ---
 source("resources/ggplot2_themes.R")
 theme_set(theme_roboto())
+
+
+# --- Import Aux Functions ---
+source("R/rv_sparse.R")
+source("R/split_intraday.R")
 ```
 
 ```{r}
@@ -124,7 +129,7 @@ rv_plot <- rv_df %>%
     subtitle = "– Daily Realized Variance",
     x = NULL,
     y = NULL,
-    caption = "Figure 1: Daily realized variance (RV) for the S&P/BMV IPC Index.\nThe RV is calculated as the sum of squared intraday returns."
+    caption = "Figure 1: Daily realized variance (RV) for the S&P/BMV IPC Index.\nThe daily RV is calculated as the sum of squared intraday returns per day."
   ) +
   scale_x_date(
     date_labels = "%Y", 
@@ -152,7 +157,7 @@ Let's check the ACF on the RVs:
 #| fig.asp: 0.618
 
 
-rv_df %>% 
+acf_plot1 <- rv_df %>% 
   pull(RV) %>% 
   acf(lag.max = 200, plot = F) %>% 
   broom::tidy() %>% 
@@ -183,7 +188,7 @@ rv_df %>%
   scale_color_manual(values = blog_colors) +
   guides(color = 'none') +
   labs(
-    title = "Autocorrelation function of realized variance",
+    title = "ACF of realized variance",
     subtitle = "– The x-axis indicates the k-th lag order.",
     x = NULL,
     y = NULL,
@@ -195,6 +200,92 @@ rv_df %>%
   
 ```
 
+And now let's check the ACF of the daily squared returns:
+
+```{r}
+ipc_daily <- readxl::read_excel(
+  path = here("data/raw/ipc_daily_close.xlsx"),
+  sheet = "IPC",
+  col_types = c('date', rep('numeric', 4))
+  )
+
+ipc_daily_clean1 <- ipc_daily %>% 
+  mutate(date = as_date(date)) %>% 
+  drop_na(date)
+
+
+ipc_daily2 <- readxl::read_excel(
+  path = here("data/raw/ipc_daily_close.xlsx"),
+  sheet = "IPC"
+  )
+
+ipc_daily_clean2 <- ipc_daily2 %>% 
+  filter(str_detect(date, "/")) %>% 
+  mutate(date = mdy(date))
+
+# Get minimum date
+min_date <- rv_df %>% 
+  pull(index_date) %>% 
+  min()
+
+
+ipc_daily_clean <- ipc_daily_clean1 %>% 
+  bind_rows(ipc_daily_clean2) %>% 
+  arrange(date) %>% 
+  filter(date >= min_date)
+
+ipc_daily_returns <- ipc_clean %>% 
+  mutate(
+    log_ret = log(close/ lag(close)),
+    sq_ret = log_ret^2
+    ) %>% 
+  drop_na(log_ret)
+
+acf_plot2 <- ipc_daily_returns %>% 
+  pull(sq_ret) %>% 
+  acf(lag.max = 200, plot = F) %>% 
+  broom::tidy() %>% 
+  filter(lag != 0) %>% 
+  ggplot(aes(lag, acf)) +
+  geom_line(aes(color = lag >= 10), size = 1.1) +
+  
+  # Bartlett Errors
+  geom_hline(yintercept = 2/sqrt(nrow(rv_df)), 
+             linetype = 2,
+             color = blog_colors[4]) +
+  geom_hline(yintercept = -2/sqrt(nrow(rv_df)), 
+             linetype = 2,
+             color = blog_colors[4]) +
+  
+  
+  geom_hline(yintercept = 0, linetype = 1) +
+  scale_x_continuous(
+    breaks = scales::breaks_pretty(n = 12),
+    expand = expansion(c(0.015, 0.03))
+  ) +
+  scale_y_continuous(
+    breaks = scales::breaks_extended(n = 8),
+    labels = scales::number_format(accuracy = .01),
+    expand = expansion(c(0.02, 0.13)),
+    limits = c(-0.1,0.5)
+  ) +
+  scale_color_manual(values = blog_colors) +
+  guides(color = 'none') +
+  labs(
+    title = "ACF of daily squared returns",
+    subtitle = "– The x-axis indicates the k-th lag order.",
+    x = NULL,
+    y = NULL,
+    caption = "Figure 3: the blue line indicates the first 10-lag order autocorrelations for the \nsquared log-returns of the IPC Index. Bartlett confidence intervals in dashed, purple lines."
+  ) +
+  theme(
+    panel.grid.major.x = element_blank(),
+  )
+```
+
+```{r}
+acf_plot1/acf_plot2
+```
 
 
 
@@ -230,16 +321,21 @@ pb <- progress::progress_bar$new(
 
 # Define a vector with all the "s-grid" parameters
 sparse_grid <- seq(from = 1, 
-                   to = 60, 
-                   by = 1)
+                   to = 55, 
+                   by = 5) - 1
+
+sparse_grid[1] <- 1
 
 
 # Create a tibble with all the nested data
 ipc_sparse <- sparse_grid %>% 
   future_map_dfr(~ split_intraday(data = ipc_intraday, 
-                                  grid = .x) %>% 
-                   rv_sparse(),
+                                  grid = .x), # %>% 
+                   # rv_sparse(),
                  .progress = T)
+
+ipc_sparse %>% 
+  filter(sparse_grid == 5)
 ```
 
 ```{r unnest-RV-sparse}
@@ -254,7 +350,11 @@ RV_means <- ipc_sparse %>%
 
 2.  Scatter plot the average RV across days on the vertical axis against $s$ on the horizontal axis.
 
-```{r, layout="l-body-outset", fig.width=8, fig.asp=0.618}
+```{r}
+#| layout: "l-body-outset"
+#| fig.width: 8
+#| fig.asp: 0.618
+
 RV_means %>% 
   ggplot(aes(sparse_grid , mean_RV_sparse)) +
   geom_point(colour = blog_colors[2], 
