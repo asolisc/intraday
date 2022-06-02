@@ -234,7 +234,7 @@ ipc_daily_clean <- ipc_daily_clean1 %>%
   arrange(date) %>% 
   filter(date >= min_date)
 
-ipc_daily_returns <- ipc_clean %>% 
+ipc_daily_returns <- ipc_daily_clean %>% 
   mutate(
     log_ret = log(close/ lag(close)),
     sq_ret = log_ret^2
@@ -287,6 +287,56 @@ acf_plot2 <- ipc_daily_returns %>%
 acf_plot1/acf_plot2
 ```
 
+
+
+```{r}
+rv_hist1 <- rv_df %>% 
+  ggplot(aes(x = RV)) +
+  geom_histogram(
+    aes(y = stat(count)/sum(stat(count))),
+    bins = 100,
+    size = 1.1,
+    fill = blog_colors[2],
+    color = blog_colors[1]) +
+  scale_y_continuous(breaks = breaks_pretty(),
+                     labels = scales::percent_format()) +
+  scale_x_continuous(breaks = breaks_pretty(8),
+                     labels = number_format(scale = 100),
+                     expand = expansion(c(0.001, 0.02))) +
+  labs(
+    title = 'Realized variance',
+    x = NULL,
+    y = NULL
+  ) +
+  # theme_fira() +
+  theme(panel.grid.major.x = element_blank(),
+        plot.background = element_blank())
+
+
+rv_hist2 <- rv_df %>% 
+  mutate(log_rv = log(RV)) %>% 
+  ggplot(aes(x = log_rv)) +
+  geom_histogram(
+    aes(y = stat(count)/sum(stat(count))),
+    bins = 50,
+    size = 1.1,
+    fill = blog_colors[3],
+    color = blog_colors[1]) +
+  scale_y_continuous(breaks = breaks_pretty(),
+                     labels = scales::percent_format()) +
+  scale_x_continuous(breaks = breaks_pretty(8),
+                     expand = expansion(c(0.015, 0.02))) +
+  labs(
+    title = 'Log of realized variance',
+    x = NULL,
+    y = NULL
+  ) +
+  # theme_fira() +
+  theme(panel.grid.major.x = element_blank(),
+        plot.background = element_blank())
+
+rv_hist1/rv_hist2
+```
 
 
 # 2. RV Sparse
