@@ -370,9 +370,9 @@ pb <- progress::progress_bar$new(
 )
 
 # Define a vector with all the "s-grid" parameters
-sparse_grid <- seq(from = 1, 
+sparse_grid <- seq(from = 0, 
                    to = 55, 
-                   by = 5) - 1
+                   by = 5)
 
 sparse_grid[1] <- 1
 
@@ -380,8 +380,9 @@ sparse_grid[1] <- 1
 # Create a tibble with all the nested data
 ipc_sparse <- sparse_grid %>% 
   future_map_dfr(~ split_intraday(data = ipc_intraday, 
-                                  grid = .x), # %>% 
-                   # rv_sparse(),
+                                  grid = .x) %>% 
+                   rv_sparse(),
+                 
                  .progress = T)
 
 ipc_sparse %>% 
@@ -407,14 +408,20 @@ RV_means <- ipc_sparse %>%
 
 RV_means %>% 
   ggplot(aes(sparse_grid , mean_RV_sparse)) +
-  geom_point(colour = blog_colors[2], 
-             size = 2) +
+  geom_line(colour = blog_colors[2], 
+             size = 1.2) +
+  geom_point(colour = blog_colors[1], 
+             size = 3) +
   labs(
     title = "Signature Plot for the Annualized RV Sparse",
     x = "Minutes",
     y = "RV"
   ) +
-  scale_y_continuous(labels = number_format())
+  scale_y_continuous(labels = number_format()) +
+  scale_x_continuous(breaks = breaks_pretty()) +
+  theme(
+    panel.grid.major.x = element_blank()
+  )
 ```
 
 3.  Look for the smallest $s$ such that the average RV does not change much for values of $s$ larger than this number.
@@ -429,4 +436,24 @@ We can start by defining the _h_-day RV from the 1-day RV as follows:
 
 $$
 RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
+$$
+
+We now forecast a variance for the next month as follows:
+
+$$
+\sigma^2_{t+1} = \alpha + \beta_1RV_{1d} + \beta_2RV_{1w} +\beta_3RV_{1m} + \beta_4\text{IPC-VIX} + u_i
+$$
+
+
+We estimate the model with a 1-year rolling window.
+
+
+
+## Predictability
+
+We now entertain the following model:
+
+$$
+R_{IPC} = \alpha + \beta \ \text{VRP} + u_i =\\
+=\alpha + \beta \ \big(RV - \text{IPC-VIX}\big) + u_i
 $$
