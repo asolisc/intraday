@@ -49,6 +49,8 @@ theme_set(theme_fira())
 
 # 1. Introduction & Importing Data
 
+[see page 7 of Realised Kernels in Practice - Trades and Quotes (2009)]
+
 We'll work with intraday data for the *S&P/BMV IPC Equity Index*. The data consists of `n = 2,133,890` observations and `k = 23` variables. The time-series is composed of prices and trades per minute, spanning from the beginning of 1996 through the first half of 2018.
 
 The first step is, of course, importing the data:
