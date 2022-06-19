@@ -418,8 +418,13 @@ RV_means %>%
 
 3.  Look for the smallest $s$ such that the average RV does not change much for values of $s$ larger than this number.
 
+# VIMEX & S&P IPC VIX Indexes
+
+
+
 # HAR Model (see page 100 Christoffersen)
-Also check: https://www.sciencedirect.com/science/article/abs/pii/S0378426621002417 (A Practical Guide to Harnessing the HAR Volatility Model (2021))
+
+Also check: <https://www.sciencedirect.com/science/article/abs/pii/S0378426621002417> (A Practical Guide to Harnessing the HAR Volatility Model (2021))
 
 The HAR (Heterogeneous Autoregression) model or mixed-frequency model provides a tool for modeling the seemingly long-memory features of realized volatility.
 
@@ -428,9 +433,6 @@ We can start by defining the *h*-day RV from the 1-day RV as follows:
 $$
 RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
 $$
-
-
-
 
 We now forecast a variance for the next month as follows:
 
