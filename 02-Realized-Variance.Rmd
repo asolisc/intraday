@@ -39,6 +39,7 @@ knitr::opts_chunk$set(
 # Data Wrangling
 library(tidyverse)
 library(lubridate)
+library(readxl)
 library(skimr)
 library(glue)
 
@@ -50,12 +51,8 @@ library(tidyquant)
 # library(tidymodels)
 
 # Visualization
-# library(ggthemes)
 library(scales)
-# library(ghibli)
 library(patchwork)
-# library(plotly)
-library(gt)
 library(progress)
 
 # Reproducibility
@@ -64,7 +61,6 @@ library(here)
 
 
 # Speed
-# library(data.table)
 library(dtplyr)
 library(arrow)
 library(furrr)
@@ -200,34 +196,17 @@ acf_plot1 <- rv_df %>%
 And now let's check the ACF of the daily squared returns:
 
 ```{r}
-ipc_daily <- readxl::read_excel(
-  path = here("data/raw/ipc_daily_close.xlsx"),
-  sheet = "IPC",
-  col_types = c('date', rep('numeric', 4))
-  )
-
-ipc_daily_clean1 <- ipc_daily %>% 
-  mutate(date = as_date(date)) %>% 
-  drop_na(date)
-
-
-ipc_daily2 <- readxl::read_excel(
-  path = here("data/raw/ipc_daily_close.xlsx"),
-  sheet = "IPC"
-  )
-
-ipc_daily_clean2 <- ipc_daily2 %>% 
-  filter(str_detect(date, "/")) %>% 
-  mutate(date = mdy(date))
-
 # Get minimum date
 min_date <- rv_df %>% 
   pull(index_date) %>% 
   min()
 
+xl_path <- "data/raw/2022_06_03-bloomberg-vimex-ipc-ipcvix.xlsx"
 
-ipc_daily_clean <- ipc_daily_clean1 %>% 
-  bind_rows(ipc_daily_clean2) %>% 
+ipc <- read_excel(xl_path, sheet = "IPC") %>% 
+  mutate(date = as_date(date))
+
+ipc_daily_clean <- ipc %>% 
   arrange(date) %>% 
   filter(date >= min_date)
 
@@ -420,6 +399,150 @@ RV_means %>%
 
 # VIMEX & S&P IPC VIX Indexes
 
+For the volatility index we take a combination between the VIMEX (BMV first started publishing it in XXX, but removed it on XXX) and the S&P IPC VIX ().
+
+However, to justify the usage of both indices as just one, we need to check that their correlation is high.
+
+We start by reading the data:
+
+```{r}
+ipc_vix <- read_excel(xl_path, sheet = "IPC-VIX") %>% 
+  mutate(date = as_date(date))
+
+ipc_vimex <- read_excel(xl_path, sheet = "VIMEX") %>% 
+  mutate(date = as_date(date))
+```
+
+
+We can then plot both indices:
+
+```{r}
+consolidated <- ipc %>% 
+  mutate(security = "IPC") %>% 
+  bind_rows(ipc_vix %>% mutate(security = "IPC-VIX")) %>% 
+  bind_rows(ipc_vimex %>% mutate(security = "VIMEX"))
+
+consolidated %>% 
+  filter(security != "IPC") %>% 
+  ggplot() +
+  geom_line(aes(date, close, color = security)) +
+  geom_rect(
+    data = tibble(),
+    aes(xmin = ymd('2015-01-01'), 
+        xmax = ymd('2017-07-01'),
+        ymin = 0,
+        ymax = 70),
+    fill = "lightgray",
+    alpha = 0.6
+    ) +
+  scale_y_continuous(breaks = scales::breaks_pretty(n = 8),
+                     expand = expansion(c(0.1, 0.06))) +
+  scale_x_date(breaks = scales::breaks_pretty(n = 8)) +
+  scale_color_manual(values = blog_colors) +
+  labs(
+    title = "IPC VIX & VIMEX, daily close",
+    x     = NULL,
+    y     = NULL,
+    color = NULL
+  ) +
+  theme_roboto() +
+  theme(panel.grid.major.x = element_blank(),
+        legend.box.spacing = unit(0.02, "mm"),
+        legend.justification = c(0,0))
+
+initial_vix_date <- ipc_vix %>% slice(1) %>% pull(date)
+last_vimex_date <- ipc_vimex %>% slice_tail(n = 1) %>% pull(date)
+```
+
+
+```{r}
+consolidated %>% 
+  filter(security != "IPC",
+         between(date, 
+                 initial_vix_date, 
+                 last_vimex_date)) %>% 
+  ggplot() +
+  geom_line(aes(date, close, color = security), 
+            size = 1.1) +
+  scale_y_continuous(
+    breaks = scales::breaks_pretty(n = 5),
+    expand = expansion(c(0.2, 0.2))
+    ) +
+  scale_x_date(
+    date_labels = "%Y",
+    breaks = timetk::tk_make_timeseries(initial_vix_date, 
+                                        last_vimex_date,
+                                        by = "year"),
+    expand = expansion(c(0, 0.05))
+               ) +
+  scale_color_manual(values = blog_colors) +
+  labs(
+    title = "IPC VIX & VIMEX, daily close",
+    subtitle = glue("Data from {initial_vix_date} to {last_vimex_date}"),
+    x     = NULL,
+    y     = NULL,
+    color = NULL
+  ) +
+  theme_roboto() +
+  theme(panel.grid.major.x = element_blank(),
+        legend.box.spacing = unit(0.02, "mm"),
+        legend.justification = c(0,0))
+```
+
+It seems that they are quite correlated. We can check the degree of linear dependence by calculation the Pearson's correlation coefficient:
+
+```{r}
+consolidated %>% 
+  filter(security != "IPC",
+         between(date, initial_date, final_date)) %>% 
+  select(date, close, security) %>% 
+  pivot_wider(
+    names_from = security,
+    values_from = close
+  ) %>% 
+  select(-date) %>% 
+  corrr::correlate()
+```
+
+We obtain 0.95, and so we can conclude that we can use both indices as one. We plot that index next:
+
+```{r}
+vimex_component <- ipc_vimex %>% 
+  filter(date < initial_vix_date) %>% 
+  mutate(security = 'VIMEX')
+
+vol_index <- vimex_component %>%
+  bind_rows(ipc_vix %>% mutate(security = "IPC VIX"))
+
+vol_index %>% 
+  mutate(security = as_factor(security)) %>% 
+  ggplot() +
+  geom_line(
+    aes(date, close, color = security), 
+    size = 1.1,
+    ) +
+  scale_y_continuous(
+    breaks = scales::breaks_pretty(n = 5),
+    expand = expansion(c(0.1, 0.2))
+    ) +
+  scale_x_date(
+    date_labels = "%Y",
+    breaks = scales::breaks_pretty(n = 8),
+    expand = expansion(c(0, 0.05))
+  ) +
+  scale_color_manual(values = blog_colors) +
+  labs(
+    title = "IPC Volatility Index, daily close",
+    subtitle = "— Built from VIMEX and IPC VIX indexes.",
+    x     = NULL,
+    y     = NULL,
+    color = NULL
+  ) +
+  theme_roboto() +
+  theme(panel.grid.major.x = element_blank(),
+        legend.box.spacing = unit(0.02, "mm"),
+        legend.justification = c(0,0))
+```
 
 
 # HAR Model (see page 100 Christoffersen)
