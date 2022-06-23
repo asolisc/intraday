@@ -494,7 +494,7 @@ It seems that they are quite correlated. We can check the degree of linear depen
 ```{r}
 consolidated %>% 
   filter(security != "IPC",
-         between(date, initial_date, final_date)) %>% 
+         between(date, initial_vix_date, last_vimex_date)) %>% 
   select(date, close, security) %>% 
   pivot_wider(
     names_from = security,
@@ -556,12 +556,25 @@ We can start by defining the *h*-day RV from the 1-day RV as follows:
 $$
 RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
 $$
-
-We now forecast a variance for the next month as follows:
+We now forecast a variance for the next month using the HAR model:
 
 $$
 \sigma^2_{t+1} = \alpha + \beta_1RV_{1d} + \beta_2RV_{1w} +\beta_3RV_{1m} + \gamma VIX^2_t/252 + u_i
 $$
+
+```{r data-prep}
+# This DataFrame will surely change to the 5-min RV Sparse
+rv_for_modeling <- rv_df
+
+rv_for_modeling %>% 
+  mutate(cum_rv = cumsum(RV),
+         # Time-related variables
+         year = year(index_date),
+         month = month(index_date),
+         day_id = row_number())
+
+```
+
 
 We estimate the model with a 1-year rolling window.
 
