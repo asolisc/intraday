@@ -116,14 +116,14 @@ Now let's plot the RVs:
 
 rv_plot <- rv_df %>% 
   # filter_time("1996" ~ "end") %>%
-  ggplot(mapping = aes(x = index_date, y = RV)) +
+  ggplot(mapping = aes(x = index_date, y = RVol)) +
   geom_col(color = blog_colors[1]) +
   labs(
     title = "Realized Variance: S&P/BMV IPC Index",
-    subtitle = "– Daily Realized Variance",
+    subtitle = "– Daily Annualized Realized Volatility",
     x = NULL,
     y = NULL,
-    caption = "Figure 1: Daily realized variance (RV) for the S&P/BMV IPC Index.\nThe daily RV is calculated as the sum of squared intraday returns per day."
+    caption = "Figure 1: Daily realized volatility (RV) for the S&P/BMV IPC Index.\nThe daily RV is calculated as the sum of squared intraday returns per day and it is then annualized."
   ) +
   scale_x_date(
     date_labels = "%Y", 
@@ -132,7 +132,7 @@ rv_plot <- rv_df %>%
   ) +
   scale_y_continuous(
     breaks = scales::breaks_extended(n = 8),
-    labels = scales::number_format(accuracy = .0001),
+    labels = scales::percent_format(accuracy = .1),
     expand = expansion(c(0, 0.13))
   ) +
   theme(
@@ -566,13 +566,35 @@ $$
 # This DataFrame will surely change to the 5-min RV Sparse
 rv_for_modeling <- rv_df
 
-rv_for_modeling %>% 
-  mutate(cum_rv = cumsum(RV),
-         # Time-related variables
-         year = year(index_date),
-         month = month(index_date),
-         day_id = row_number())
+vol_ts <- rv_for_modeling %>% 
+  mutate(
+    cum_rv = cumsum(RV),
+    
+    # Time-related variables
+    year   = year(index_date),
+    month  = month(index_date),
+    day_id = row_number(),
+    
+    # RV variables
+    rv_daily   = RV,
+    rv_weekly  = (cum_rv - lag(cum_rv, n = 5L)) / 5,
+    rv_monthly = (cum_rv - lag(cum_rv, n = 21L)) / 21
+  ) %>% 
+  left_join(
+    vol_index %>% 
+      select(date, close) %>% 
+      rename('index_date' = date,
+             'vix'        = close),
+    by = 'index_date'
+  )
 
+vol_ts
+```
+
+How to impute the VIX data?
+
+```{r}
+library(tidymodels)
 ```
 
 
