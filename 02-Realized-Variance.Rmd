@@ -586,7 +586,10 @@ vol_ts <- rv_for_modeling %>%
       rename('index_date' = date,
              'vix'        = close),
     by = 'index_date'
-  )
+  ) %>% 
+  
+  # impute VIX data
+  fill(vix, .direction = "updown")
 
 vol_ts
 ```
@@ -595,8 +598,36 @@ How to impute the VIX data?
 
 ```{r}
 library(tidymodels)
+library(modeltime)
+# https://www.business-science.io/code-tools/2020/06/29/introducing-modeltime.html
+
+# Using rsample
+# vol_resamples <- vol_ts %>% 
+#   rolling_origin(initial = 12*21, 
+#                  assess = 21, 
+#                  cumulative = F)
+
+
+# Using timetk
+vol_resamples <- vol_ts %>% 
+  time_series_cv(date_var   = index_date,
+                 initial    = 12 * 21,
+                 assess     = 21,
+                 cumulative = FALSE)
+
+vol_rs_df <- vol_resamples %>% 
+  
+  # Convert the resamples object into a DataFrame
+  tk_time_series_cv_plan()
+  
+vol_rs_df %>% 
+  tail()
+
 ```
 
+```{r}
+
+```
 
 We estimate the model with a 1-year rolling window.
 
