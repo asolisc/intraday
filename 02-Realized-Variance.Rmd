@@ -626,7 +626,9 @@ vol_rs_df %>%
 ```
 
 ```{r}
-
+volatility_rec <- recipe(
+  
+)
 ```
 
 We estimate the model with a 1-year rolling window.
