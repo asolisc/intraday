@@ -413,7 +413,6 @@ ipc_vimex <- read_excel(xl_path, sheet = "VIMEX") %>%
   mutate(date = as_date(date))
 ```
 
-
 We can then plot both indices:
 
 ```{r}
@@ -453,7 +452,6 @@ consolidated %>%
 initial_vix_date <- ipc_vix %>% slice(1) %>% pull(date)
 last_vimex_date <- ipc_vimex %>% slice_tail(n = 1) %>% pull(date)
 ```
-
 
 ```{r}
 consolidated %>% 
@@ -544,7 +542,6 @@ vol_index %>%
         legend.justification = c(0,0))
 ```
 
-
 # HAR Model (see page 100 Christoffersen)
 
 Also check: <https://www.sciencedirect.com/science/article/abs/pii/S0378426621002417> (A Practical Guide to Harnessing the HAR Volatility Model (2021))
@@ -555,8 +552,7 @@ We can start by defining the *h*-day RV from the 1-day RV as follows:
 
 $$
 RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
-$$
-We now forecast a variance for the next month using the HAR model:
+$$ We now forecast a variance for the next month using the HAR model:
 
 $$
 \sigma^2_{t+1} = \alpha + \beta_1RV_{1d} + \beta_2RV_{1w} +\beta_3RV_{1m} + \gamma VIX^2_t/252 + u_i
@@ -564,7 +560,10 @@ $$
 
 ```{r data-prep}
 # This DataFrame will surely change to the 5-min RV Sparse
-rv_for_modeling <- rv_df
+rv_for_modeling <- rv_df %>% 
+  
+  # filter for data when IPC VIX is available
+  filter(index_date >= initial_vix_date)
 
 vol_ts <- rv_for_modeling %>% 
   mutate(
@@ -578,7 +577,8 @@ vol_ts <- rv_for_modeling %>%
     # RV variables
     rv_daily   = RV,
     rv_weekly  = (cum_rv - lag(cum_rv, n = 5L)) / 5,
-    rv_monthly = (cum_rv - lag(cum_rv, n = 21L)) / 21
+    rv_monthly = (cum_rv - lag(cum_rv, n = 21L)) / 21,
+    rv_target  = (lead(cum_rv, n = 21L) - cum_rv) / 21
   ) %>% 
   left_join(
     vol_index %>% 
@@ -589,9 +589,13 @@ vol_ts <- rv_for_modeling %>%
   ) %>% 
   
   # impute VIX data
-  fill(vix, .direction = "updown")
+  fill(vix, .direction = "updown") %>% 
+  
+  # Reorder columns
+  select(index_date, rv_target, rv_daily, rv_weekly, rv_monthly, vix, year, month, day_id) %>% 
+  
+  drop_na(rv_monthly, rv_target)
 
-vol_ts
 ```
 
 How to impute the VIX data?
@@ -602,10 +606,10 @@ library(modeltime)
 # https://www.business-science.io/code-tools/2020/06/29/introducing-modeltime.html
 
 # Using rsample
-# vol_resamples <- vol_ts %>% 
-#   rolling_origin(initial = 12*21, 
-#                  assess = 21, 
-#                  cumulative = F)
+vol_split <- vol_ts %>%
+  rolling_origin(initial = nrow(vol_ts) - 21,
+                 assess = 21,
+                 cumulative = F)
 
 
 # Using timetk
@@ -615,21 +619,74 @@ vol_resamples <- vol_ts %>%
                  assess     = 21,
                  cumulative = FALSE)
 
+
+vol_resamples <- vol_ts %>% 
+  sliding_period(
+    index = index_date,
+    period = "month",
+    lookback = 12,
+    assess_stop = 1
+  )
+
+
 vol_rs_df <- vol_resamples %>% 
+  slice(1:3) %>% 
   
   # Convert the resamples object into a DataFrame
   tk_time_series_cv_plan()
   
+# Plot TS CV Plan
 vol_rs_df %>% 
-  tail()
+  plot_time_series_cv_plan(.date_var    = index_date,
+                           .value       = rv_target,
+                           .interactive = FALSE)
 
 ```
 
 ```{r}
-volatility_rec <- recipe(
-  
-)
+vol_rec <- vol_rs_df %>% 
+  recipe(rv_target ~ rv_daily + rv_weekly + rv_monthly + vix) %>% 
+  step_mutate(vix = vix^2/252)
+
 ```
+
+```{r}
+# Pick a model
+reg_spec <- linear_reg(penalty = tune(),
+                       mixture = tune()) %>% 
+  
+  # Set mode
+  set_mode("regression") %>% 
+  
+  # Choose engine
+  set_engine("glm")
+
+reg_spec
+```
+
+
+
+```{r}
+vol_wf <- workflow() %>% 
+  add_recipe(vol_rec) %>% 
+  add_model(reg_spec)
+```
+
+
+```{r}
+set.seed(123)
+tictoc::tic()
+vol_tuned <- vol_wf %>% 
+  tune_grid(vol_resamples, grid = 25)
+tictoc::toc()
+
+vol_tuned %>% 
+  collect_metrics()
+
+vol_tuned %>% 
+  show_best(metric = "rmse")
+```
+
 
 We estimate the model with a 1-year rolling window.
 
