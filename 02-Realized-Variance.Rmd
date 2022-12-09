@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   
   # Figure resolution and size
   out.width = '100%',
-  dpi = 400,
+  dpi = 320,
   
   # Latex figure environment
   fig.env = "figure"
@@ -267,7 +267,7 @@ acf_plot1/acf_plot2
 rv_hist1 <- rv_df %>% 
   ggplot(aes(x = RV)) +
   geom_histogram(
-    aes(y = stat(count)/sum(stat(count))),
+    aes(y = after_stat(count)/sum(after_stat(count))),
     bins = 100,
     size = 1.1,
     fill = blog_colors[2],
@@ -291,7 +291,7 @@ rv_hist2 <- rv_df %>%
   mutate(log_rv = log(RV)) %>% 
   ggplot(aes(x = log_rv)) +
   geom_histogram(
-    aes(y = stat(count)/sum(stat(count))),
+    aes(y = after_stat(count)/sum(after_stat(count))),
     bins = 50,
     size = 1.1,
     fill = blog_colors[3],
@@ -326,7 +326,9 @@ $$
 RV_{t+1}^s = \sum \limits_{j=1}^{m/s} R^2_{t+js/m} 
 $$
 
-Now the problem lies in the choice of the sub-sampling parameter $s$, a problem which represents a typical bias-variance trade-off. That is because ...
+Now the problem lies in the choice of the sub-sampling parameter $s$, a problem which represents a typical bias-variance trade-off. The larger the s the less likely we are to get a biased estimate of volatility, but the larger the s the fewer observations we are using and so the more noisy our estimate will be. 
+
+For highly liquid assets, we should choose an $s$ close to 1 and a much larger $s$ for illiquid assets.If the estimated RVs are biased due to liquidity effects while employing a high sample frequency, the bias should go away when the sampling frequency is reduced, or when s is raised.
 
 This is where *volatility signature plots* (VSP) will help; these are a graphical tool that helps us choose the sub-sampling parameter $s$. We do a VSP in the following manner:
 
@@ -342,7 +344,7 @@ pb <- progress::progress_bar$new(
 
 # Define a vector with all the "s-grid" parameters
 sparse_grid <- seq(from = 0, 
-                   to = 55, 
+                   to = 65, 
                    by = 5)
 
 sparse_grid[1] <- 1
@@ -356,8 +358,6 @@ ipc_sparse <- sparse_grid %>%
                  
                  .progress = T)
 
-ipc_sparse %>% 
-  filter(sparse_grid == 5)
 ```
 
 ```{r unnest-RV-sparse}
@@ -664,29 +664,27 @@ reg_spec <- linear_reg(penalty = tune(),
 reg_spec
 ```
 
-
-
 ```{r}
 vol_wf <- workflow() %>% 
   add_recipe(vol_rec) %>% 
   add_model(reg_spec)
 ```
 
-
 ```{r}
 set.seed(123)
 tictoc::tic()
 vol_tuned <- vol_wf %>% 
-  tune_grid(vol_resamples, grid = 25)
+  tune_grid(vol_resamples, grid = 5)
 tictoc::toc()
+```
 
+```{r}
 vol_tuned %>% 
   collect_metrics()
 
 vol_tuned %>% 
   show_best(metric = "rmse")
 ```
-
 
 We estimate the model with a 1-year rolling window.
 
