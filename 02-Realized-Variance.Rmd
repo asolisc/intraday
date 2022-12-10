@@ -334,7 +334,7 @@ This is where *volatility signature plots* (VSP) will help; these are a graphica
 
 1.  Compute $RV_{t+1}^s$ for values of $s$ going from 1 to 120 minutes.
 
-```{r}
+```{r, eval=FALSE}
 # Define progress bar
 pb <- progress::progress_bar$new(
   format = " computing RVs [:bar] :percent eta: :eta",
@@ -357,10 +357,10 @@ ipc_sparse <- sparse_grid %>%
                    rv_sparse(),
                  
                  .progress = T)
-
+rv_sparse
 ```
 
-```{r unnest-RV-sparse}
+```{r unnest-RV-sparse, eval=FALSE}
 # Get the mean for each RV sparse:
 RV_means <- ipc_sparse %>% 
   group_by(sparse_grid) %>% 
@@ -370,6 +370,82 @@ RV_means <- ipc_sparse %>%
   )
 ```
 
+
+```{r get_signature_plot}
+library(RcppRoll)
+
+# --- Create function for getting the sparse log returns ---
+mutate_sparse_return <- function(.data, 
+                                 .return_col = log_ret, 
+                                 .trade_id_col = trade_id, 
+                                 .sparse) {
+  .data %>% 
+    group_by(index_date) %>% 
+    transmute('log_ret_{.sparse}m':= if_else(trade_id %% .sparse  == 0, 
+                                             RcppRoll::roll_sumr(x = {{.return_col}}, n = .sparse,  fill = NA), 
+                                             NA_real_)) %>% 
+    ungroup() %>% 
+    select(-index_date)
+}
+
+
+# --- Prepare data for wrangling ---
+indexed_ipc <- ipc_intraday %>% 
+  # filter(index_date <= mdy('12/31/1996')) %>%
+  select(index_date, index_time, log_ret, last_price) %>% 
+  group_by(index_date) %>% 
+  mutate(trade_id = row_number() - 1) %>% 
+  ungroup()
+
+
+# --- Define sparse grid and create corresponding returns ---
+sparse_grid <- seq(5, 240, by = 5)
+
+ipc_sparse <- indexed_ipc %>% 
+  bind_cols(
+    map_dfc(.x = sparse_grid,
+            .f = ~ mutate_sparse_return(.data = indexed_ipc,
+                                        .sparse = .x))
+    ) %>% 
+  # Also create squared sparse returns
+  mutate(
+    across(
+      .cols = contains("log_ret"),
+      .fns  = ~ .x^2,
+      .names = "{.col}_squared")
+  )
+
+
+# --- Compute the realized variance and get it annualized ---
+rv_sparse_df <- ipc_sparse %>% 
+  group_by(index_date) %>% 
+  summarise(
+    across(
+      .cols = contains("squared"),
+      .fns = ~ sqrt(sum(.x, na.rm = TRUE) * 252)
+    ),
+    .groups = 'drop'
+  )
+
+
+# --- Get the average RV per grid parameter ---
+rv_means <- rv_sparse_df %>% 
+  summarise(
+    across(
+      .cols = -index_date,
+      .fns = mean
+    )
+  ) %>% 
+  mutate(var = "rv") %>% 
+  pivot_longer(cols = -var, values_to = 'mean_rv') %>% 
+  mutate(
+    sparse_grid = str_extract(name, "\\d+"),
+    sparse_grid = if_else(is.na(sparse_grid), "1", sparse_grid),
+    sparse_grid = as.numeric(sparse_grid)
+  )
+```
+
+
 2.  Scatter plot the average RV across days on the vertical axis against $s$ on the horizontal axis.
 
 ```{r}
@@ -377,8 +453,8 @@ RV_means <- ipc_sparse %>%
 #| fig.width: 8
 #| fig.asp: 0.618
 
-RV_means %>% 
-  ggplot(aes(sparse_grid , mean_RV_sparse)) +
+rv_means %>% 
+  ggplot(aes(sparse_grid , mean_rv)) +
   geom_line(colour = blog_colors[2], 
              size = 1.2) +
   geom_point(colour = blog_colors[1], 
