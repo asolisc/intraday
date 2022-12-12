@@ -399,7 +399,7 @@ indexed_ipc <- ipc_intraday %>%
 
 
 # --- Define sparse grid and create corresponding returns ---
-sparse_grid <- seq(5, 240, by = 5)
+sparse_grid <- seq(5, 65, by = 5)
 
 ipc_sparse <- indexed_ipc %>% 
   bind_cols(
@@ -455,8 +455,8 @@ rv_means <- rv_sparse_df %>%
 
 rv_means %>% 
   ggplot(aes(sparse_grid , mean_rv)) +
-  geom_line(colour = blog_colors[2], 
-             size = 1.2) +
+  geom_line(colour = blog_colors[6], 
+             size = 1.1) +
   geom_point(colour = blog_colors[1], 
              size = 3) +
   labs(
@@ -467,7 +467,9 @@ rv_means %>%
   scale_y_continuous(labels = number_format()) +
   scale_x_continuous(breaks = breaks_pretty()) +
   theme(
-    panel.grid.major.x = element_blank()
+    panel.grid.major.x = element_blank(),
+    panel.background = element_rect(fill = "#F4F3EE", colour = "#F4F3EE"),
+    plot.background = element_rect(fill = "#F4F3EE", colour = "#F4F3EE")
   )
 ```
 
@@ -551,7 +553,7 @@ consolidated %>%
                ) +
   scale_color_manual(values = blog_colors) +
   labs(
-    title = "IPC VIX & VIMEX, daily close",
+    title = "IPC VIX & VIMEX, Daily Close",
     subtitle = glue("Data from {initial_vix_date} to {last_vimex_date}"),
     x     = NULL,
     y     = NULL,
@@ -606,7 +608,7 @@ vol_index %>%
   ) +
   scale_color_manual(values = blog_colors) +
   labs(
-    title = "IPC Volatility Index, daily close",
+    title = "IPC Volatility Index, Daily Close",
     subtitle = "— Built from VIMEX and IPC VIX indexes.",
     x     = NULL,
     y     = NULL,
@@ -627,11 +629,23 @@ The HAR (Heterogeneous Autoregression) model or mixed-frequency model provides a
 We can start by defining the *h*-day RV from the 1-day RV as follows:
 
 $$
-RV_{t-h+1,\ t} = \big(RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big)/h
-$$ We now forecast a variance for the next month using the HAR model:
+RV_{t-h+1\ :\ t} = \big[RV_{t-h+1} + RV_{t-h+2} + \ \cdots \  +RV_t\big]/h
+$$ 
+which can be interpreted as the average total variance starting with day $t-h+1$ and through day $t$. Hence, it is reasonable to compute a daily, weekly, and monthly RV defined by this simple moving average:
+
+\begin{align}
+RV_{D,t} &= RV_t \\
+RV_{W,t} &= [RV_{t-4} + RV_{t-3} + RV_{t-2} + RV_{t-1} + RV_t\big]/5 \\
+RV_{M,t} &= [RV_{t-20} + RV_{t-19} + \cdots + RV_{t-1} + RV_t\big]/21
+\end{align}
+
+
+
+We now forecast a variance for the next month using the HAR model. We use the same rule of thumb employed for estimating GARCH models with daily data: using the past 1,000 observations (which contains a good amount of data but reduces the risk of forecasting through a structural break).
+
 
 $$
-\sigma^2_{t+1} = \alpha + \beta_1RV_{1d} + \beta_2RV_{1w} +\beta_3RV_{1m} + \gamma VIX^2_t/252 + u_i
+\sigma^2_{t+1} = \alpha + \beta_1RV_{t, d} + \beta_2RV_{t, w} +\beta_3RV_{t, m} + \gamma VIX^2_t/252 + u_i
 $$
 
 ```{r data-prep}
@@ -768,7 +782,8 @@ We estimate the model with a 1-year rolling window.
 
 We now entertain the following model:
 
-```{=tex}
+
+```{tex}
 \begin{align}
 R_{IPC} $= \alpha + \beta \ \text{VRP} + u_i =\\
         $=\alpha + \beta \ \big(RV - VIX\big) + u_i
