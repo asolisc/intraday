@@ -151,12 +151,12 @@ Let's check the ACF on the RVs:
 
 
 acf_plot1 <- rv_df %>% 
-  pull(RV) %>% 
-  acf(lag.max = 200, plot = F) %>% 
+  pull(RVol) %>% 
+  acf(lag.max = 100, plot = F) %>% 
   broom::tidy() %>% 
   filter(lag != 0) %>% 
   ggplot(aes(lag, acf)) +
-  geom_line(aes(color = lag >= 10), size = 1.1) +
+  geom_line(aes(color = lag > 10), linewidth = 0.7) +
   
   # Bartlett Errors
   geom_hline(yintercept = 2/sqrt(nrow(rv_df)), 
@@ -175,13 +175,12 @@ acf_plot1 <- rv_df %>%
   scale_y_continuous(
     breaks = scales::breaks_extended(n = 8),
     labels = scales::number_format(accuracy = .01),
-    expand = expansion(c(0.02, 0.13)),
-    limits = c(-0.1,0.5)
+    expand = expansion(c(0.02, 0.05)),
   ) +
   scale_color_manual(values = blog_colors) +
   guides(color = 'none') +
   labs(
-    title = "ACF of realized variance",
+    title = "ACF of RV",
     subtitle = "– The x-axis indicates the k-th lag order.",
     x = NULL,
     y = NULL,
@@ -191,6 +190,7 @@ acf_plot1 <- rv_df %>%
     panel.grid.major.x = element_blank(),
   )
   
+# acf_plot1
 ```
 
 And now let's check the ACF of the daily squared returns:
@@ -641,7 +641,15 @@ RV_{M,t} &= [RV_{t-20} + RV_{t-19} + \cdots + RV_{t-1} + RV_t\big]/21
 
 
 
-We now forecast a variance for the next month using the HAR model. We use the same rule of thumb employed for estimating GARCH models with daily data: using the past 1,000 observations (which contains a good amount of data but reduces the risk of forecasting through a structural break).
+We now forecast a variance for the next month using the HAR model. We use the same rule of thumb employed for estimating GARCH models with daily data: using the past 1,000 observations (which contains a good amount of data but reduces the risk of forecasting through a structural break). Additionally, we compute the model in logs, give the stylized fact that RV follows a log-normal distribution (so that the error term is Normally distributed by construct). The longer-horizon forecasting for a HAR model follows the next equations:
+
+$$
+\ln(RV_{t+1:t+k}) = \phi_{0,k} + \phi_{D,k} \ln(RV_{D,t}) + \phi_{W,k} \ln(RV_{W,t}) + \phi_{M,k} \ln(RV_{M,t}) + \varepsilon_{t+1:t+k} \ ,
+$$
+where:
+$$
+RV_{t+1:t+k} = \dfrac{RV_{t+1} + RV_{t+2} + \ \cdots \  +RV_{t+k}}{k} 
+$$
 
 
 $$
@@ -653,23 +661,27 @@ $$
 rv_for_modeling <- rv_df %>% 
   
   # filter for data when IPC VIX is available
-  filter(index_date >= initial_vix_date)
+  filter(index_date >= initial_vix_date) %>% 
+  select(index_date, RV)
 
-vol_ts <- rv_for_modeling %>% 
+# rv_ts
+har_data <- rv_for_modeling %>% 
   mutate(
-    cum_rv = cumsum(RV),
+    rv_target       = RcppRoll::roll_meanl(lead(RV), n = 21),
+    rv_daily        = RV,
+    rv_weekly       = RcppRoll::roll_meanr(rv_daily, n = 5),
+    rv_monthly      = RcppRoll::roll_meanr(rv_daily, n = 21),
+    log_rv_target   = log(rv_target),
+    log_rv_daily    = log(rv_daily),
+    log_rv_weekly   = log(rv_weekly),
+    log_rv_monthly  = log(rv_monthly),
     
     # Time-related variables
     year   = year(index_date),
     month  = month(index_date),
-    day_id = row_number(),
-    
-    # RV variables
-    rv_daily   = RV,
-    rv_weekly  = (cum_rv - lag(cum_rv, n = 5L)) / 5,
-    rv_monthly = (cum_rv - lag(cum_rv, n = 21L)) / 21,
-    rv_target  = (lead(cum_rv, n = 21L) - cum_rv) / 21
+    day_id = row_number()
   ) %>% 
+  select(index_date, year, month, day_id, contains("log")) %>% 
   left_join(
     vol_index %>% 
       select(date, close) %>% 
@@ -677,18 +689,14 @@ vol_ts <- rv_for_modeling %>%
              'vix'        = close),
     by = 'index_date'
   ) %>% 
-  
   # impute VIX data
   fill(vix, .direction = "updown") %>% 
-  
-  # Reorder columns
-  select(index_date, rv_target, rv_daily, rv_weekly, rv_monthly, vix, year, month, day_id) %>% 
-  
-  drop_na(rv_monthly, rv_target)
+  drop_na()
 
+har_data
 ```
 
-How to impute the VIX data?
+## Question for Aurelio: How to impute the VIX data?
 
 ```{r}
 library(tidymodels)
