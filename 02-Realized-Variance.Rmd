@@ -180,7 +180,7 @@ acf_plot1 <- rv_df %>%
   scale_color_manual(values = blog_colors) +
   guides(color = 'none') +
   labs(
-    title = "ACF of RV",
+    title = "Auto-Correlation Function for Realized Variance",
     subtitle = "– The x-axis indicates the k-th lag order.",
     x = NULL,
     y = NULL,
@@ -190,7 +190,7 @@ acf_plot1 <- rv_df %>%
     panel.grid.major.x = element_blank(),
   )
   
-# acf_plot1
+acf_plot1
 ```
 
 And now let's check the ACF of the daily squared returns:
